@@ -28,4 +28,14 @@ app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
+if (args.Contains("seeddata"))
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        SeedData.Initialize(services);
+    }
+    return;
+}
+
 app.Run();
