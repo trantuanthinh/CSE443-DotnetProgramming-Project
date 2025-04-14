@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <Target Name="NpmBuild" BeforeTargets="Build">
-    <Exec Command="npm install" />
     <Exec Command="npm run build" />
   </Target>
 
