@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Project.Core.Base
+namespace Project.Core.Base.Enity
 {
     public class BaseEntity<IdType>
     {

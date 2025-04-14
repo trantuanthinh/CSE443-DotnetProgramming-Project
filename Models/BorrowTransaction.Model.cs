@@ -1,6 +1,6 @@
-using Project.Core.Base;
-using Project.Utils;
 using System.ComponentModel.DataAnnotations;
+using Project.Core.Base.Enity;
+using Project.Utils;
 
 namespace Project.Models
 {
@@ -8,6 +8,7 @@ namespace Project.Models
     {
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
+
         [Required]
         public required Guid ItemId { get; set; }
 
