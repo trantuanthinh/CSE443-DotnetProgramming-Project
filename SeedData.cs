@@ -1,26 +1,70 @@
 using Microsoft.EntityFrameworkCore;
 using Project.AppContext;
+using Project.Models;
+using Project.Utils;
 
-public static class SeedData
+namespace Project
 {
-    public static void Initialize(IServiceProvider serviceProvider)
+    public static class SeedData
     {
-        using var context = new DataContext(
-            serviceProvider.GetRequiredService<DbContextOptions<DataContext>>()
-        );
-
-        // Kiểm tra nếu dữ liệu đã tồn tại
-        if (context.Users.Any())
+        public static void Initialize(IServiceProvider serviceProvider)
         {
-            return; // Dữ liệu đã được seed
+            using var context = new DataContext(
+                serviceProvider.GetRequiredService<DbContextOptions<DataContext>>()
+            );
+
+            if (context.Users.Any())
+            {
+                return;
+            }
+
+            string password = "taoquamet";
+            string hashedPassword = password;
+
+            var users = new List<(
+                string Username,
+                string Name,
+                string Email,
+                int PhoneNumber,
+                UserType Role
+            )>
+            {
+                (
+                    "nguyenxuancuong",
+                    "Nguyen Xuan Cuong",
+                    "conan246817@gmail.com",
+                    123456789,
+                    UserType.Lecturer
+                ),
+                (
+                    "tranvantai",
+                    "Tran Van Tai",
+                    "tranvantai@gmail.com",
+                    987654321,
+                    UserType.Lecturer
+                ),
+                ("nguyenvana", "Nguyen Van A", "nguyenvana@gmail.com", 123789456, UserType.Manager),
+                ("tranthib", "Tran Thi B", "tranthib@gmail.com", 987321654, UserType.Manager),
+            };
+
+            var userList = users
+                .Select(user => new User
+                {
+                    Id = Guid.NewGuid(),
+                    Created = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow,
+                    Username = user.Username,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Password = hashedPassword,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = user.Role,
+                    LoginType = LoginType.Standard,
+                })
+                .ToList();
+
+            context.Users.AddRange(userList);
+            context.SaveChanges();
         }
-
-        // Thêm dữ liệu mẫu
-        // context.Users.AddRange(
-        //     new User { Name = "Admin", Role = "manager" },
-        //     new User { Name = "Lecturer", Role = "lecturer" }
-        // );
-
-        context.SaveChanges();
     }
 }
