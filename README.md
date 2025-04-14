@@ -1,6 +1,6 @@
-# ASP.NET Web API Project
+# ASP.NET Web MVC Project
 
-This is an ASP.NET Web API project created to serve as the backend for your application.
+This is an ASP.NET Web MVC project to create web application.
 
 ## Getting Started
 
@@ -21,7 +21,7 @@ By default, the application will be hosted at:
 
 API Base URL: https://localhost:7102 (HTTPS)
 
-API Base URL: http://localhost:5130 (HTTP)
+API Base URL: http://localhost:5085 (HTTP)
 
 
 Install Dotnet Globally:
