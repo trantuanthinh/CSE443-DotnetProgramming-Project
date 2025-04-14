@@ -20,4 +20,9 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
   </ItemGroup>
 
+  <Target Name="NpmBuild" BeforeTargets="Build">
+    <Exec Command="npm install" />
+    <Exec Command="npm run build" />
+  </Target>
+
 </Project>
