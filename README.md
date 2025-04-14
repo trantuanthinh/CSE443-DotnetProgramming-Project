@@ -11,15 +11,14 @@ First, ensure you have the following installed:
 
 ### Running the Development Server
 
-To run the development server, use the following command:
-
+Because we use TailwindCss, so we use the following command:
 ```
 dotnet run
 ```
 
 By default, the application will be hosted at:
 
-API Base URL: https://localhost:7102 (HTTPS)
+API Base URL: https://localhost:7091 (HTTPS)
 
 API Base URL: http://localhost:5085 (HTTP)
 
@@ -29,6 +28,10 @@ Install Dotnet Globally:
 dotnet tool -install --global dotnet -ef
 ```
 
+Install Node_Modules:
+```
+npm i
+```
 
 To update database, use the following command:
 
