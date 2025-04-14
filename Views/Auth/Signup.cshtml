@@ -1,8 +1,60 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Sign Up";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>sadasdasdas</p>
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-center">Create an account</h2>
+        <form asp-controller="Auth" asp-action="SignUp" method="post" class="space-y-4">
+            <div>
+                <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input type="text" id="fullName" name="FullName" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
+                              focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                <input type="email" id="email" name="Email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
+                              focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="Password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
+                              focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
+            <div>
+                <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="ConfirmPassword" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
+                              focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
+            <div>
+                <label for="role" class="block text-sm font-medium text-gray-700">Vai trò</label>
+                <select id="role" name="Role" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
+                               focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="" disabled selected>-- Chọn vai trò --</option>
+                    <option value="manager">Manager</option>
+                    <option value="lecturer">Lecturer</option>
+                </select>
+            </div>
+            <div class="flex items-center">
+                <input id="agree" name="Agree" type="checkbox" required
+                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
+                <label for="agree" class="ml-2 block text-sm text-gray-900">
+                    I agree to the
+                    <a href="#" class="text-indigo-600 hover:text-indigo-500">terms and conditions</a>
+                </label>
+            </div>
+
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm
+                               text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700
+                               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Sign Up
+                </button>
+            </div>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Already have an account?
+                <a href="/Account/Login" class="font-medium text-indigo-600 hover:text-indigo-500">Sign in</a>
+            </p>
+        </form>
+    </div>
 </div>

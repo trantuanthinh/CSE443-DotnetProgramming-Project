@@ -1,81 +1,39 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Project.Controllers
+public class AuthController : Controller
 {
-    public class AuthController : Controller
+    private readonly ILogger<AuthController> _logger;
+
+    public AuthController(ILogger<AuthController> logger)
     {
-        private readonly ILogger<HomeController> _logger;
+        _logger = logger;
+    }
 
-        public AuthController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+    public ActionResult SignIn()
+    {
+        return View();
+    }
 
-        public ActionResult SignIn()
-        {
-            return View();
-        }
+    public ActionResult SignUp()
+    {
+        return View();
+    }
 
-        public ActionResult SignUp(int id)
-        {
-            return View();
-        }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult SignIn(IFormCollection form)
+    {
+        string email = form["email"];
+        string password = form["password"];
+        _logger.LogInformation("Email: {Email}, Password: {Password}", email, password);
+        // Thêm logic xử lý đăng nhập ở đây
+        return RedirectToAction(nameof(SignIn));
+    }
 
-        // POST: Auth/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Auth/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Auth/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Auth/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Auth/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult SignUp(IFormCollection form)
+    {
+        return RedirectToAction(nameof(SignUp));
     }
 }
