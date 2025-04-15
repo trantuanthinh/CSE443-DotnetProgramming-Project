@@ -40,7 +40,7 @@ public class AuthController : BaseController
         {
             HttpContext.Session.SetObject("CurrentUser", user);
         }
-        return RedirectToAction(nameof(Index), "Home");
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]

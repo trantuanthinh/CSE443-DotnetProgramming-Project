@@ -16,21 +16,23 @@
         <nav class="bg-white shadow mb-3">
             <div class="container mx-auto px-4">
                 <div class="flex justify-between items-center">
-                    <a class="text-xl font-bold" asp-area="" asp-controller="Home" asp-action="Index">Project</a>
+                    <a class="text-xl font-bold" asp-controller="Home" asp-action="Index">Project</a>
                     <div class="flex space-x-4">
-                        <a class="text-gray-700" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        <a class="text-gray-700" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="text-gray-700" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="text-gray-700" asp-controller="Home" asp-action="Privacy">Privacy</a>
 
                         @if (ViewBag.User == null)
                         {
 
-                            <a class="text-gray-700" asp-area="" asp-controller="Auth" asp-action="SignIn">Sign In</a>
-                            <a class="text-gray-700" asp-area="" asp-controller="Auth" asp-action="SignUp">Sign Up</a>
+                            <a class="text-gray-700" asp-controller="Auth" asp-action="SignIn">Sign In</a>
+                            <a class="text-gray-700" asp-controller="Auth" asp-action="SignUp">Sign Up</a>
                         }
                         else
                         {
                             <span class="text-gray-700">Welcome, @ViewBag.User.Name!</span>
-                            <a class="text-gray-700" asp-controller="Auth" asp-action="Logout">Logout</a>
+                            <form class="inline-block" asp-controller="Home" asp-action="Logout" method="post">
+                                <button type="submit" class="text-gray-700">Logout</button>
+                            </form>
                         }
 
                     </div>
@@ -46,8 +48,7 @@
 
     <footer class="border-t py-4 text-center text-gray-600">
         <div class="container mx-auto">
-            &copy; 2025 - Project - <a asp-area="" asp-controller="Home" asp-action="Privacy"
-                class="text-blue-500">Privacy</a>
+            &copy; 2025 - Project - <a asp-controller="Home" asp-action="Privacy" class="text-blue-500">Privacy</a>
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>

@@ -20,6 +20,13 @@ namespace Project.Controllers
             return View();
         }
 
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("CurrentUser");
+
+            return RedirectToAction("Index", "Home");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
