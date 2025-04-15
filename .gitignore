@@ -12,7 +12,7 @@ output.css
 Logs/
 
 # Generated files
-# appsettings.json
+appsettings.json
 project.lock.json
 .vs/
 
