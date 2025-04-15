@@ -4,7 +4,7 @@ namespace Project.Interfaces
 {
     public interface IAuthService
     {
-        Task<User> SignUp(User user);
+        Task<bool> SignUp(User user);
         Task<User> SignIn(string email, string password);
 
         // bool IsValidUser(string username, string password);

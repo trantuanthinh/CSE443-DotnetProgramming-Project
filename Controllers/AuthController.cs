@@ -1,9 +1,11 @@
+using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
 using Project.AppContext;
 using Project.Core;
 using Project.Core.Extensions;
 using Project.Interfaces;
 using Project.Models;
+using Project.Utils;
 
 public class AuthController : BaseController
 {
@@ -45,8 +47,26 @@ public class AuthController : BaseController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult SignUp(IFormCollection form)
+    public async Task<ActionResult> SignUp(IFormCollection form)
     {
+        string name = form["name"];
+        string email = form["email"];
+        string password = form["password"];
+        string confirmPassword = form["confirmPassword"];
+        string role = form["role"];
+        User user = new User()
+        {
+            Id = Guid.NewGuid(),
+            Created = DateTime.Now,
+            Updated = DateTime.Now,
+            Name = name,
+            Email = email,
+            Password = password,
+            Role = role == "manager" ? UserType.Manager : UserType.Lecturer,
+            LoginType = LoginType.Standard,
+        };
+        bool isCreated = await _authService.SignUp(user);
+
         return RedirectToAction(nameof(SignUp));
     }
 }

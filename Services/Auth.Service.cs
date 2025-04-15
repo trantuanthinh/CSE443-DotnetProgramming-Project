@@ -15,14 +15,12 @@ namespace Project.Services
             _repository = repository;
         }
 
-        public async Task<User> SignUp(User user)
+        public async Task<bool> SignUp(User user)
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             _repository.Add(user);
-            await _repository.SaveAsync();
-
-            return user;
+            return await _repository.SaveAsync();
         }
 
         public async Task<User> SignIn(string email, string password)
