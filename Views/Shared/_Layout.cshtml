@@ -20,8 +20,19 @@
                     <div class="flex space-x-4">
                         <a class="text-gray-700" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         <a class="text-gray-700" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        <a class="text-gray-700" asp-area="" asp-controller="Auth" asp-action="SignIn">Sign In</a>
-                        <a class="text-gray-700" asp-area="" asp-controller="Auth" asp-action="SignUp">Sign Up</a>
+
+                        @if (ViewBag.User == null)
+                        {
+
+                            <a class="text-gray-700" asp-area="" asp-controller="Auth" asp-action="SignIn">Sign In</a>
+                            <a class="text-gray-700" asp-area="" asp-controller="Auth" asp-action="SignUp">Sign Up</a>
+                        }
+                        else
+                        {
+                            <span class="text-gray-700">Welcome, @ViewBag.User.Name!</span>
+                            <a class="text-gray-700" asp-controller="Auth" asp-action="Logout">Logout</a>
+                        }
+
                     </div>
                 </div>
             </div>

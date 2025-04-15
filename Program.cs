@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Project;
 using Project.AppContext;
+using Project.Interfaces;
+using Project.Repositories;
+using Project.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
+
+builder.Services.AddSession();
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddScoped<UserRepository>();
 
 WebApplication app = builder.Build();
 
@@ -24,7 +34,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");

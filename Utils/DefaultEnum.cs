@@ -3,19 +3,20 @@
     public enum UserType
     {
         Manager,
-        Lecturer
+        Lecturer,
     }
+
     public enum LoginType
     {
         Google,
-        Standard
+        Standard,
     }
 
     public enum UsernameType
     {
         Email,
         PhoneNumber,
-        UserName
+        UserName,
     }
 
     public enum ItemStatus
@@ -25,6 +26,6 @@
         Rejected,
         Borrowing,
         Returned,
-        Overdue
+        Overdue,
     }
 }

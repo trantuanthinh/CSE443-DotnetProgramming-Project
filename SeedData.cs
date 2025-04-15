@@ -1,3 +1,4 @@
+using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using Project.AppContext;
 using Project.Models;
@@ -18,8 +19,8 @@ namespace Project
                 return;
             }
 
-            string password = "taoquamet";
-            string hashedPassword = password;
+            string password = "quametmoi";
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
             var users = new List<(
                 string Username,

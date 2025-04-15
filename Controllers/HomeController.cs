@@ -1,17 +1,14 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Project.Core;
 using Project.Models;
 
 namespace Project.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        public HomeController()
+            : base() { }
 
         public IActionResult Index()
         {

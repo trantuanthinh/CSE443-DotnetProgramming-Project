@@ -1,12 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
+using Project.AppContext;
+using Project.Core;
+using Project.Core.Extensions;
+using Project.Interfaces;
+using Project.Models;
 
-public class AuthController : Controller
+public class AuthController : BaseController
 {
-    private readonly ILogger<AuthController> _logger;
+    private readonly IAuthService _authService;
 
-    public AuthController(ILogger<AuthController> logger)
+    public AuthController(
+        IAuthService authService,
+        DataContext dataContext,
+        ILogger<AuthController> logger
+    )
+        : base(dataContext, logger)
     {
-        _logger = logger;
+        _authService = authService;
     }
 
     public ActionResult SignIn()
@@ -21,13 +31,16 @@ public class AuthController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult SignIn(IFormCollection form)
+    public async Task<ActionResult> SignIn(IFormCollection form)
     {
         string email = form["email"];
         string password = form["password"];
-        _logger.LogInformation("Email: {Email}, Password: {Password}", email, password);
-        // Thêm logic xử lý đăng nhập ở đây
-        return RedirectToAction(nameof(SignIn));
+        User user = await _authService.SignIn(email, password);
+        if (user != null)
+        {
+            HttpContext.Session.SetObject("CurrentUser", user);
+        }
+        return RedirectToAction(nameof(Index), "Home");
     }
 
     [HttpPost]
