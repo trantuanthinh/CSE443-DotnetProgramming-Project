@@ -10,7 +10,7 @@ namespace Project.Services
     {
         private readonly ItemRepository _repository = repository;
 
-        public async Task<ICollection<Item>> GetItems(User user)
+        public async Task<ICollection<Item>> GetItems()
         {
             return await _repository.SelectAll().ToListAsync();
         }

@@ -9,5 +9,17 @@
             building Web apps with ASP.NET Core
         </a>.
     </p>
-    @* @foreach () *@
+
+    @if (ViewBag.Items != null)
+    {
+        foreach (var item in ViewBag.Items)
+        {
+            <div class="text-center mb-4">
+                <p class="text-xl font-semibold">@item.Name</p>
+                <div class="size-10">
+                    <img src="data:image/jpeg;base64,@item.Image" alt="@item.Name" class="" />
+                </div>
+            </div>
+        }
+    }
 </div>

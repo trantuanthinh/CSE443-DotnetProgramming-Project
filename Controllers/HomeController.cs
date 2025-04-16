@@ -1,18 +1,18 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core;
+using Project.Interfaces;
 using Project.Models;
 
 namespace Project.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController(IItemService itemService) : BaseController()
     {
-        public HomeController()
-            : base() { }
+        private readonly IItemService _itemService = itemService;
 
         public IActionResult Index()
         {
-            // @ViewBag.Products =
+            ViewBag.Items = _itemService.GetItems().Result;
             return View();
         }
 

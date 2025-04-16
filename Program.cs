@@ -18,8 +18,10 @@ builder.Services.AddSession();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IItemService, ItemService>();
 
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<ItemRepository>();
 
 WebApplication app = builder.Build();
 
