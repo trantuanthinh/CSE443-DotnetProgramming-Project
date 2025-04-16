@@ -6,14 +6,9 @@ using Project.Repositories;
 
 namespace Project.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService(UserRepository repository) : IAuthService
     {
-        private readonly UserRepository _repository;
-
-        public AuthService(UserRepository repository)
-        {
-            _repository = repository;
-        }
+        private readonly UserRepository _repository = repository;
 
         public async Task<bool> SignUp(User user)
         {

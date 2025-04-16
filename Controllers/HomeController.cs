@@ -12,11 +12,7 @@ namespace Project.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
+            // @ViewBag.Products =
             return View();
         }
 
