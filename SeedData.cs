@@ -67,7 +67,6 @@ namespace Project
                 "Measuring Instruments",
                 "Chemical Handling Instruments",
                 "Safety Instruments",
-                "Cleaning and Storage Instruments",
             };
 
             var categoriesList = categories
@@ -92,12 +91,10 @@ namespace Project
             {
                 ("Volumetric Flask", categoriesList[1].Id, categoriesList[1], 10, "10"),
                 ("Electronic Balance", categoriesList[1].Id, categoriesList[1], 2, "2"),
-                ("Round-bottom Flask", categoriesList[2].Id, categoriesList[2], 3, "3"),
+                ("Flat-bottom Flask", categoriesList[2].Id, categoriesList[2], 3, "3"),
                 ("Test Tubes", categoriesList[2].Id, categoriesList[2], 20, "20"),
                 ("Safety Goggles", categoriesList[3].Id, categoriesList[3], 50, "3"),
                 ("Lab Gloves", categoriesList[3].Id, categoriesList[3], 50, "20"),
-                ("Storage Cabinet", categoriesList[4].Id, categoriesList[4], 5, "3"),
-                ("Drying Oven", categoriesList[4].Id, categoriesList[4], 5, "20"),
             };
             var itemsList = items
                 .Select(item => new Item
