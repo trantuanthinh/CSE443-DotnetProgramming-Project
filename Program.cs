@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Project;
 using Project.AppContext;
 using Project.Interfaces;
+using Project.MailServices;
 using Project.Repositories;
 using Project.Services;
 
@@ -17,6 +18,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddSession();
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<MailService>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IBorrowTransactionService, BorrowTransactionService>();

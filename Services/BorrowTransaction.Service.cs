@@ -48,5 +48,41 @@ namespace Project.Services
             _repository.Delete(id);
             return await _repository.SaveAsync();
         }
+
+        public string GenerateBorrowResponseBody(
+            string username,
+            int quantity,
+            string status,
+            DateTime pickupTime
+        )
+        {
+            return $@"
+    <!DOCTYPE html>
+    <html lang=""en"">
+    <head>
+        <meta charset=""UTF-8"">
+        <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+        <title>Borrow Request Response</title>
+    </head>
+    <body style=""font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;"">
+        <div style=""background-color: #ffffff; padding: 20px 30px; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center; margin: 0 auto;"">
+            <h2 style=""color: #333;"">Borrow Request Status</h2>
+            <p style=""font-size: 16px; color: #444;"">
+                Hello <strong>{username}</strong>,
+            </p>
+            <p style=""font-size: 16px; color: #555; margin: 16px 0;"">
+                Your borrow request for <strong>{quantity}</strong> item(s) has been 
+                <strong style=""color: {(status == "Approved" ? "#28a745" : "#dc3545")};"">{status}</strong>.
+            </p>
+            <p style=""font-size: 16px; color: #444;"">
+                <strong>Pickup Date:</strong> {pickupTime:dd/MM/yyyy}
+            </p>
+            <p style=""font-size: 14px; color: #888; margin-top: 20px;"">
+                Thank you for using our service.
+            </p>
+        </div>
+    </body>
+    </html>";
+        }
     }
 }

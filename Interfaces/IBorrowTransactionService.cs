@@ -9,5 +9,11 @@ namespace Project.Interfaces
         Task<bool> CreateItem(BorrowTransaction item);
         Task<bool> EditItem(BorrowTransaction item);
         Task<bool> DeleteItem(Guid id);
+        string GenerateBorrowResponseBody(
+            string username,
+            int quantity,
+            string status,
+            DateTime pickupTime
+        );
     }
 }
