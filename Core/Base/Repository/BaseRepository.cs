@@ -35,47 +35,32 @@ namespace Project.Core.Base.Repository
 
         public T Add(T obj)
         {
-            var createdAtProperty = obj.GetType().GetProperty("Created_At");
-            var modifiedAtProperty = obj.GetType().GetProperty("Modified_At");
-            var timestampAtProperty = obj.GetType().GetProperty("Timestamp");
-            var isActiveAtProperty = obj.GetType().GetProperty("IsActive");
+            var createdAtProperty = obj.GetType().GetProperty("Created");
+            var updatedAtProperty = obj.GetType().GetProperty("Updated");
             if (createdAtProperty != null && createdAtProperty.CanWrite)
             {
                 createdAtProperty.SetValue(obj, DateTime.UtcNow);
             }
-            if (modifiedAtProperty != null && modifiedAtProperty.CanWrite)
+            if (updatedAtProperty != null && updatedAtProperty.CanWrite)
             {
-                modifiedAtProperty.SetValue(obj, DateTime.UtcNow);
-            }
-            if (timestampAtProperty != null && timestampAtProperty.CanWrite)
-            {
-                timestampAtProperty.SetValue(obj, DateTime.UtcNow);
-            }
-            if (isActiveAtProperty != null && isActiveAtProperty.CanWrite)
-            {
-                isActiveAtProperty.SetValue(obj, true);
+                updatedAtProperty.SetValue(obj, DateTime.UtcNow);
             }
             return _dbSet.Add(obj).Entity;
         }
 
         public async Task AddRangeAsync(IList<T> objs)
         {
-            foreach (var item in objs)
+            foreach (var obj in objs)
             {
-                var createdAtProperty = item.GetType().GetProperty("Created_At");
-                var modifiedAtProperty = item.GetType().GetProperty("Modified_At");
-                var timestampAtProperty = item.GetType().GetProperty("Timestamp");
+                var createdAtProperty = obj.GetType().GetProperty("Created");
+                var updatedAtProperty = obj.GetType().GetProperty("Updated");
                 if (createdAtProperty != null && createdAtProperty.CanWrite)
                 {
-                    createdAtProperty.SetValue(item, DateTime.UtcNow);
+                    createdAtProperty.SetValue(obj, DateTime.UtcNow);
                 }
-                if (modifiedAtProperty != null && modifiedAtProperty.CanWrite)
+                if (updatedAtProperty != null && updatedAtProperty.CanWrite)
                 {
-                    modifiedAtProperty.SetValue(item, DateTime.UtcNow);
-                }
-                if (timestampAtProperty != null && timestampAtProperty.CanWrite)
-                {
-                    timestampAtProperty.SetValue(item, DateTime.UtcNow);
+                    updatedAtProperty.SetValue(obj, DateTime.UtcNow);
                 }
             }
             await _dbSet.AddRangeAsync(objs);

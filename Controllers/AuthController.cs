@@ -1,4 +1,3 @@
-using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
 using Project.AppContext;
 using Project.Core;

@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.ObjectPool;
 using Project.Core;
 using Project.Interfaces;
 using Project.Models;
@@ -34,22 +32,31 @@ namespace Project.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BorrowRequest(Guid itemId, int quantity)
+        public async Task<IActionResult> BorrowRequest(
+            Guid itemId,
+            int quantity,
+            DateTime requestDate
+        )
         {
             if (CurrentUser == null)
             {
                 return RedirectToAction("Index", "Home");
             }
 
+            if (requestDate <= DateTime.Now)
+            {
+                _logger.LogInformation("Invalid Date");
+                return RedirectToAction("Index", "Home");
+            }
+
             var id = CurrentUser.Id;
-            _logger.LogInformation($"Borrow request: Item ID = {itemId}, Quantity = {quantity}");
             var item = new BorrowTransaction
             {
                 Id = Guid.NewGuid(),
                 ItemId = itemId,
                 Quantity = quantity,
                 Status = ItemStatus.Pending,
-                RequestDate = DateTime.Now,
+                RequestDate = requestDate,
                 BorrowerId = id,
             };
             bool isCreated = await _borrowTransactionService.CreateItem(item);

@@ -13,7 +13,7 @@ namespace Project.Services
 
         public async Task<ICollection<BorrowTransaction>> GetItems()
         {
-            return await _repository.SelectAll().ToListAsync();
+            return await _repository.SelectAll().Include(item => item.Item).ToListAsync();
         }
 
         public async Task<BorrowTransaction> GetItem(Guid id)

@@ -1,0 +1,44 @@
+@model List<Project.Models.BorrowTransaction>
+@using Project.Utils
+
+@{
+    ViewData["Title"] = "Manager Page";
+}
+
+<div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 py-10">
+    <p>Request Borrow Item List:</p>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="flex flex-row items-center justify-start mb-4 gap-4">
+                <div class="w-10 h-10">
+                    <img src="data:image/jpeg;base64,@item.Item.Image" alt="@item.Item.Name" class="rounded" />
+                </div>
+                <p class="text-gray-600">Quantity: <strong>@item.Quantity</strong></p>
+
+                <div class="flex justify-end gap-2">
+                    <form asp-controller="Manager" asp-action="BorrowResponse" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="itemId" value="@item.Id" />
+                        <div class="flex gap-2">
+                            <button type="submit" name="status" value="@ItemStatus.Approved.ToString()"
+                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                Approve
+                            </button>
+                            <button type="submit" name="status" value="@ItemStatus.Rejected.ToString()"
+                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                                Reject
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-gray-500">No borrow requests available.</p>
+    }
+</div>

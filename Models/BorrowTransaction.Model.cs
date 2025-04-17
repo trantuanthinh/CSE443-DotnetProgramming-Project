@@ -14,6 +14,7 @@ namespace Project.Models
 
         [Required]
         public required Guid BorrowerId { get; set; }
+        public Guid? ManagerId { get; set; }
 
         [Required]
         public required int Quantity { get; set; }
@@ -26,5 +27,6 @@ namespace Project.Models
 
         public Item? Item { get; set; }
         public User? Borrower { get; set; }
+        public User? Manager { get; set; }
     }
 }
