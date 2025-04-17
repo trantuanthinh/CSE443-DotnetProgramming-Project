@@ -16,6 +16,7 @@
                     <img src="data:image/jpeg;base64,@item.Item.Image" alt="@item.Item.Name" class="rounded" />
                 </div>
                 <p class="text-gray-600">Quantity: <strong>@item.Quantity</strong></p>
+                <p class="text-gray-600">Quantity: <strong>@item.RequestDate</strong></p>
 
                 <div class="flex justify-end gap-2">
                     <form asp-controller="Manager" asp-action="BorrowResponse" method="post">

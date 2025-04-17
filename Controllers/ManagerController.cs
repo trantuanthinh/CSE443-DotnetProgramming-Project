@@ -32,20 +32,20 @@ namespace Project.Controllers
                 itemId,
                 status.ToString()
             );
-            // if (CurrentUser == null)
-            // {
-            //     return RedirectToAction("Index", "Home");
-            // }
+            if (CurrentUser == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
-            // var id = CurrentUser.Id;
-            // var item = await _borrowTransactionService.GetItem(itemId);
-            // item.ManagerId = id;
-            // item.Status = status;
-            // bool isUpdated = await _borrowTransactionService.EditItem(item);
-            // if (isUpdated)
-            // {
-            //     _logger.LogInformation("Borrow Response Updated");
-            // }
+            var id = CurrentUser.Id;
+            var item = await _borrowTransactionService.GetItem(itemId);
+            item.ManagerId = id;
+            item.Status = status;
+            bool isUpdated = await _borrowTransactionService.EditItem(item);
+            if (isUpdated)
+            {
+                _logger.LogInformation("Borrow Response Updated");
+            }
 
             return RedirectToAction("Index", "Manager");
         }
