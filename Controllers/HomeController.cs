@@ -1,25 +1,62 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.ObjectPool;
 using Project.Core;
 using Project.Interfaces;
 using Project.Models;
+using Project.Utils;
 
 namespace Project.Controllers
 {
-    public class HomeController(IItemService itemService) : BaseController()
+    public class HomeController(
+        ILogger<HomeController> logger,
+        IItemService itemService,
+        IBorrowTransactionService borrowTransactionService
+    ) : BaseController(logger: logger)
     {
         private readonly IItemService _itemService = itemService;
+        private readonly IBorrowTransactionService _borrowTransactionService =
+            borrowTransactionService;
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ViewBag.Items = _itemService.GetItems().Result;
-            return View();
+            var items = await _itemService.GetItems();
+            return View(items);
         }
 
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("CurrentUser");
 
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BorrowRequest(Guid itemId, int quantity)
+        {
+            if (CurrentUser == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var id = CurrentUser.Id;
+            _logger.LogInformation($"Borrow request: Item ID = {itemId}, Quantity = {quantity}");
+            var item = new BorrowTransaction
+            {
+                Id = Guid.NewGuid(),
+                ItemId = itemId,
+                Quantity = quantity,
+                Status = ItemStatus.Pending,
+                RequestDate = DateTime.Now,
+                BorrowerId = id,
+            };
+            bool isCreated = await _borrowTransactionService.CreateItem(item);
+            if (isCreated)
+            {
+                _logger.LogInformation("Borrow request created");
+            }
             return RedirectToAction("Index", "Home");
         }
 

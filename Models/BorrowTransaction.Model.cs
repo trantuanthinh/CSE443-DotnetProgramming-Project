@@ -18,9 +18,9 @@ namespace Project.Models
         [Required]
         public required int Quantity { get; set; }
         public DateTime RequestDate { get; set; }
-        public DateTime BorrowDate { get; set; }
-        public DateTime ReturnDate { get; set; }
-        public DateTime DueDate { get; set; }
+        public DateTime? BorrowDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
+        public DateTime? DueDate { get; set; }
         public string? Note { get; set; }
         public ItemStatus Status { get; set; }
 

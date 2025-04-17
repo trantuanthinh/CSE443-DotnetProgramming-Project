@@ -1,25 +1,71 @@
-﻿@{
+﻿@model List<Project.Models.Item>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="flex flex-col justify-center items-center h-screen bg-gray-100">
+<div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 py-10">
     <h1 class="text-6xl font-extrabold text-blue-600 mb-4">Welcome</h1>
-    <p class="text-lg text-gray-700">Learn about
+    <p class="text-lg text-gray-700 mb-8">
+        Learn about
         <a href="https://learn.microsoft.com/aspnet/core" class="text-blue-500 hover:underline">
             building Web apps with ASP.NET Core
         </a>.
     </p>
 
-    @if (ViewBag.Items != null)
+    @if (Model != null && Model.Any())
     {
-        foreach (var item in ViewBag.Items)
+        foreach (var item in Model)
         {
-            <div class="text-center mb-4">
+            <div class="flex flex-row items-center justify-start mb-4 gap-4">
                 <p class="text-xl font-semibold">@item.Name</p>
                 <div class="size-10">
-                    <img src="data:image/jpeg;base64,@item.Image" alt="@item.Name" class="" />
+                    <img src="data:image/jpeg;base64,@item.Image" alt="@item.Name" class="rounded" />
                 </div>
+                <p class="text-gray-600">Available: <strong>@item.Quantity</strong></p>
+
+                <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    onclick="openModal('@item.Id', '@item.Name', @item.Quantity)">
+                    Request Borrow
+                </button>
             </div>
         }
     }
 </div>
+
+<div id="borrowModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+    <div class="bg-white p-6 rounded shadow-lg w-96 mx-auto mt-20">
+        <h2 class="text-xl font-bold mb-4">Request Borrow</h2>
+        <form id="borrowForm" method="post" asp-controller="Home" asp-action="BorrowRequest">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="itemId" id="modalItemId" />
+            <p id="modalItemName" class="mb-2 font-medium text-gray-700"></p>
+            <label for="quantity" class="block text-gray-700">Quantity:</label>
+            <input type="number" name="quantity" id="quantityInput" class="w-full border rounded p-2 mb-4" required
+                min="1" />
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Cancel</button>
+                <button type="submit"
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Confirm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openModal(itemId, itemName, maxQuantity) {
+            document.getElementById("modalItemId").value = itemId;
+            document.getElementById("modalItemName").innerText = `Item: ${ itemName }`;
+            const quantityInput = document.getElementById("quantityInput");
+            quantityInput.value = 1;
+            quantityInput.max = maxQuantity;
+            document.getElementById("borrowModal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("borrowModal").classList.add("hidden");
+        }
+    </script>
+}
