@@ -23,7 +23,8 @@ namespace Project.Controllers
         public async Task<IActionResult> Index()
         {
             var items = await _borrowTransactionService.GetItems();
-            return View(items);
+            var filterList = items.Where(item => item.Status == ItemStatus.Pending).ToList();
+            return View(filterList);
         }
 
         [HttpPost]
