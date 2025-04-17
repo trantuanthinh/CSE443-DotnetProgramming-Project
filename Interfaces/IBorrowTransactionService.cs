@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore.Storage;
 using Project.Models;
 
 namespace Project.Interfaces
 {
     public interface IBorrowTransactionService
     {
+        Task<IDbContextTransaction> BeginTransactionAsync();
         Task<ICollection<BorrowTransaction>> GetItems();
         Task<BorrowTransaction> GetItem(Guid id);
         Task<bool> CreateItem(BorrowTransaction item);

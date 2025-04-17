@@ -31,42 +31,60 @@ namespace Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BorrowResponse(Guid itemId, ItemStatus status)
         {
-            _logger.LogInformation(
-                "Borrow Response: Item ID = {0}, Status = {1}",
-                itemId,
-                status.ToString()
-            );
             if (CurrentUser == null)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var id = CurrentUser.Id;
-            var item = await _borrowTransactionService.GetItem(itemId);
-            item.ManagerId = id;
-            item.Status = status;
-            bool isUpdated = await _borrowTransactionService.EditItem(item);
-            if (isUpdated)
+            await using var transaction = await _borrowTransactionService.BeginTransactionAsync();
+            try
             {
-                _logger.LogInformation("Borrow Response Updated");
-            }
+                var borrowTransaction = await _borrowTransactionService.GetItem(itemId);
+                if (borrowTransaction == null)
+                {
+                    _logger.LogInformation("Borrow Transaction not found");
+                    return RedirectToAction("Index", "Manager");
+                }
 
-            var body = _borrowTransactionService.GenerateBorrowResponseBody(
-                CurrentUser.Name,
-                item.Quantity,
-                item.Status.ToString(),
-                item.RequestDate
-            );
-            bool isSended = await _mailService.SendMail(
-                CurrentUser.Email,
-                "Borrow Response Status",
-                body
-            );
-            if (isSended)
+                var item = await _itemService.GetItem(borrowTransaction.Item.Id);
+                if (item == null || borrowTransaction.Quantity > item.Quantity)
+                {
+                    _logger.LogInformation("Invalid Borrow Quantity");
+                    return RedirectToAction("Index", "Manager");
+                }
+
+                borrowTransaction.ManagerId = CurrentUser.Id;
+                borrowTransaction.Status = status;
+                if (!await _borrowTransactionService.EditItem(borrowTransaction))
+                {
+                    throw new Exception("Failed to update Borrow Transaction");
+                }
+
+                item.Quantity -= borrowTransaction.Quantity;
+                if (!await _itemService.EditItem(item))
+                {
+                    throw new Exception("Failed to update Item");
+                }
+
+                // var body = _borrowTransactionService.GenerateBorrowResponseBody(
+                //     CurrentUser.Name,
+                //     borrowTransaction.Quantity,
+                //     borrowTransaction.Status.ToString(),
+                //     borrowTransaction.RequestDate
+                // );
+                // if (!await _mailService.SendMail(CurrentUser.Email, "Borrow Response Status", body))
+                // {
+                //     throw new Exception("Failed to send email");
+                // }
+
+                await transaction.CommitAsync();
+                _logger.LogInformation("Transaction Success");
+            }
+            catch (Exception ex)
             {
-                _logger.LogInformation("Mail Sended");
+                await transaction.RollbackAsync();
+                _logger.LogError("Transaction Failed: {0}", ex.Message);
             }
-
             return RedirectToAction("Index", "Manager");
         }
 

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Project.AppContext;
 using Project.Interfaces;
 using Project.Models;
@@ -11,6 +12,11 @@ namespace Project.Services
     {
         private readonly BorrowTransactionRepository _repository = repository;
 
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _repository.BeginTransactionAsync();
+        }
+
         public async Task<ICollection<BorrowTransaction>> GetItems()
         {
             return await _repository.SelectAll().Include(item => item.Item).ToListAsync();
@@ -18,7 +24,11 @@ namespace Project.Services
 
         public async Task<BorrowTransaction> GetItem(Guid id)
         {
-            return await _repository.SelectAll().Where(item => item.Id == id).FirstOrDefaultAsync();
+            return await _repository
+                .SelectAll()
+                .Include(item => item.Item)
+                .Where(item => item.Id == id)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> CreateItem(BorrowTransaction item)
