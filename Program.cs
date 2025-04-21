@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Project;
 using Project.AppContext;
+using Project.AutoMapperHelper;
+using Project.Core;
 using Project.Interfaces;
 using Project.MailServices;
 using Project.Repositories;
@@ -18,7 +20,10 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddSession();
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<MailService>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<BaseController>();
+builder.Services.AddScoped<MappingHelper>();
+builder.Services.AddSingleton<MailService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();

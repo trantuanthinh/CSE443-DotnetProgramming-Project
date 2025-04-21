@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Project.AppContext;
@@ -9,14 +10,20 @@ namespace Project.Core
     public class BaseController : Controller
     {
         protected User CurrentUser;
+        protected readonly IMapper? _mapper;
         protected readonly DataContext? _dataContext;
         protected readonly ILogger? _logger;
 
         public BaseController() { }
 
-        public BaseController(DataContext? dataContext = null, ILogger? logger = null)
+        public BaseController(
+            DataContext? dataContext = null,
+            IMapper? mapper = null,
+            ILogger? logger = null
+        )
         {
             _dataContext = dataContext;
+            _mapper = mapper;
             _logger = logger;
         }
 

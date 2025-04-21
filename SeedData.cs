@@ -22,7 +22,7 @@ namespace Project
                 string Username,
                 string Name,
                 string Email,
-                int PhoneNumber,
+                string PhoneNumber,
                 UserType Role
             )>
             {
@@ -30,18 +30,24 @@ namespace Project
                     "nguyenxuancuong",
                     "Nguyen Xuan Cuong",
                     "conan246817@gmail.com",
-                    123456789,
+                    "123456789",
                     UserType.Lecturer
                 ),
                 (
                     "tranvantai",
                     "Tran Van Tai",
                     "tranvantai@gmail.com",
-                    987654321,
+                    "987654321",
                     UserType.Lecturer
                 ),
-                ("nguyenvana", "Nguyen Van A", "nguyenvana@gmail.com", 123789456, UserType.Manager),
-                ("tranthib", "Tran Thi B", "tranthib@gmail.com", 987321654, UserType.Manager),
+                (
+                    "nguyenvana",
+                    "Nguyen Van A",
+                    "nguyenvana@gmail.com",
+                    "123789456",
+                    UserType.Manager
+                ),
+                ("tranthib", "Tran Thi B", "tranthib@gmail.com", "987321654", UserType.Manager),
             };
 
             var userList = users

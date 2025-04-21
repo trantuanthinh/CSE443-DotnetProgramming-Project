@@ -6,7 +6,10 @@ namespace Project.Interfaces
     {
         Task<bool> SignUp(User user);
         Task<User> SignIn(string email, string password);
-
-        // bool IsValidUser(string username, string password);
+        string GetGoogleUrl();
+        Task<string> ExchangeCodeForTokenAsync(string code, string type);
+        Task<string> GetUserInfoAsync(string accessToken);
+        Task<User> GoogleAuthenticatedUser(string email);
+        Task<bool> CreateGoogleUser(User _item);
     }
 }

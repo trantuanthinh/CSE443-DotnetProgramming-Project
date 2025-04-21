@@ -26,5 +26,50 @@
                 </button>
             </div>
         </form>
+
+        <form asp-controller="Auth" asp-action="ContinueWithGoogle" method="post" id="googleForm">
+            @Html.AntiForgeryToken()
+            <div>
+                <button type="submit"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Continue with Google
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+
+<script>
+    document.getElementById('googleForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'RequestVerificationToken': form.querySelector('input[name="__RequestVerificationToken"]').value
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirectUrl) {
+                    const width = 600;
+                    const height = 700;
+                    const left = (window.innerWidth - width) / 2 + window.screenX;
+                    const top = (window.innerHeight - height) / 2 + window.screenY;
+
+                    window.open(
+                        data.redirectUrl,
+                        '_blank',
+                        `width=${ width },height=${ height },top=${ top },left=${ left },resizable,scrollbars`
+                    );
+                } else {
+                    alert("Failed to get redirect URL.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>

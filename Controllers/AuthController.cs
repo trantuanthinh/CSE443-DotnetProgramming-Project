@@ -1,7 +1,10 @@
+using System.Text.Json;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Project.AppContext;
 using Project.Core;
 using Project.Core.Extensions;
+using Project.DTO;
 using Project.Interfaces;
 using Project.Models;
 using Project.Utils;
@@ -13,9 +16,10 @@ public class AuthController : BaseController
     public AuthController(
         IAuthService authService,
         DataContext dataContext,
+        IMapper mapper,
         ILogger<AuthController> logger
     )
-        : base(dataContext, logger)
+        : base(dataContext, mapper, logger)
     {
         _authService = authService;
     }
@@ -66,6 +70,77 @@ public class AuthController : BaseController
         };
         bool isCreated = await _authService.SignUp(user);
 
-        return RedirectToAction(nameof(SignUp));
+        return RedirectToAction(nameof(SignIn));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult ContinueWithGoogle()
+    {
+        var url = _authService.GetGoogleUrl();
+        return Json(new { redirectUrl = url });
+    }
+
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [HttpGet]
+    [Route("auth/google/callback")]
+    public async Task<IActionResult> GoogleCallback(string code)
+    {
+        try
+        {
+            string accessToken = await _authService.ExchangeCodeForTokenAsync(code, "signin");
+            var userInfo = await _authService.GetUserInfoAsync(accessToken);
+            using var doc = JsonDocument.Parse(userInfo);
+            string email = doc.RootElement.TryGetProperty("email", out var emailElement)
+                ? emailElement.GetString()
+                : "";
+
+            User _item = await _authService.GoogleAuthenticatedUser(email);
+            if (_item == null)
+            {
+                string name = doc.RootElement.TryGetProperty("name", out var nameElement)
+                    ? nameElement.GetString()
+                    : "";
+
+                string phoneNumber = doc.RootElement.TryGetProperty(
+                    "phoneNumber",
+                    out var phoneNumberElement
+                )
+                    ? phoneNumberElement.GetString()
+                    : "";
+
+                string avatar = doc.RootElement.TryGetProperty("picture", out var avatarElement)
+                    ? avatarElement.GetString()
+                    : "";
+
+                GoogleRequest item = new GoogleRequest
+                {
+                    Name = name,
+                    Email = email,
+                    PhoneNumber = phoneNumber,
+                };
+
+                _item = _mapper.Map<User>(item);
+                bool isCreated = await _authService.CreateGoogleUser(_item);
+                if (!isCreated)
+                {
+                    _logger.LogInformation("Failed to create Google User");
+                    return RedirectToAction(nameof(SignIn));
+                }
+            }
+
+            string script =
+                $@"<script>
+                    if (window.opener) 
+                        {{
+                            window.close();
+                        }}
+                    </script>";
+            return Content(script, "text/html");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Failed to sign in with Google: " + ex.Message);
+        }
     }
 }
