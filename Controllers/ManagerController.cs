@@ -66,16 +66,16 @@ namespace Project.Controllers
                     throw new Exception("Failed to update Item");
                 }
 
-                // var body = _borrowTransactionService.GenerateBorrowResponseBody(
-                //     CurrentUser.Name,
-                //     borrowTransaction.Quantity,
-                //     borrowTransaction.Status.ToString(),
-                //     borrowTransaction.RequestDate
-                // );
-                // if (!await _mailService.SendMail(CurrentUser.Email, "Borrow Response Status", body))
-                // {
-                //     throw new Exception("Failed to send email");
-                // }
+                var body = _borrowTransactionService.GenerateBorrowResponseBody(
+                    CurrentUser.Name,
+                    borrowTransaction.Quantity,
+                    borrowTransaction.Status.ToString(),
+                    borrowTransaction.RequestDate
+                );
+                if (!await _mailService.SendMail(CurrentUser.Email, "Borrow Response Status", body))
+                {
+                    throw new Exception("Failed to send email");
+                }
 
                 await transaction.CommitAsync();
                 _logger.LogInformation("Transaction Success");

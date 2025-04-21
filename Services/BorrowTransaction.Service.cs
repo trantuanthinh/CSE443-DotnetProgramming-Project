@@ -19,7 +19,11 @@ namespace Project.Services
 
         public async Task<ICollection<BorrowTransaction>> GetItems()
         {
-            return await _repository.SelectAll().Include(item => item.Item).ToListAsync();
+            return await _repository
+                .SelectAll()
+                .Include(item => item.Item)
+                .Include(item => item.Borrower)
+                .ToListAsync();
         }
 
         public async Task<BorrowTransaction> GetItem(Guid id)
@@ -89,6 +93,33 @@ namespace Project.Services
             </p>
             <p style=""font-size: 14px; color: #888; margin-top: 20px;"">
                 Thank you for using our service.
+            </p>
+        </div>
+    </body>
+    </html>";
+        }
+
+        public string GenerateOverdueBody(string username, int quantity, DateTime? dueDate)
+        {
+            return $@"
+    <!DOCTYPE html>
+    <html lang=""en"">
+    <head>
+        <meta charset=""UTF-8"">
+        <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+        <title>Overdue Notification</title>
+    </head>
+    <body style=""font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;"">
+        <div style=""background-color: #ffffff; padding: 20px 30px; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center; margin: 0 auto;"">
+            <h2 style=""color: #333;"">Overdue Notice</h2>
+            <p style=""font-size: 16px; color: #444;"">
+                Hello <strong>{username}</strong>,
+            </p>
+            <p style=""font-size: 16px; color: #555; margin: 16px 0;"">
+                This is a reminder that <strong>{quantity}</strong> item(s) you borrowed are now overdue. The due date was <strong>{(dueDate.HasValue ? dueDate.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy"))}</strong>.
+            </p>
+            <p style=""font-size: 14px; color: #888; margin-top: 20px;"">
+                Please return the items as soon as possible. Thank you for your attention.
             </p>
         </div>
     </body>
