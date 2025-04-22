@@ -17,5 +17,7 @@ namespace Project.Interfaces
             string status,
             DateTime pickupTime
         );
+
+        string GenerateOverdueBody(string username, int quantity, DateTime? dueDate);
     }
 }

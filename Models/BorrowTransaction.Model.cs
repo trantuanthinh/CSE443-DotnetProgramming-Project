@@ -18,10 +18,9 @@ namespace Project.Models
 
         [Required]
         public required int Quantity { get; set; }
-        public DateTime RequestDate { get; set; }
-        public DateTime? BorrowDate { get; set; }
-        public DateTime? ReturnDate { get; set; }
-        public DateTime? DueDate { get; set; }
+        public DateTime RequestDate { get; set; } // ngày mà lecturer muốn mượn
+        public DateTime? ReturnDate { get; set; } // ngày mà lecturer trả
+        public DateTime? DueDate { get; set; } // ngày hạn cuối mà lecturer phải trả (default: 7 ngày)
         public string? Note { get; set; }
         public ItemStatus Status { get; set; }
 

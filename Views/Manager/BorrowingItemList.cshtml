@@ -1,0 +1,54 @@
+@model List<Project.Models.BorrowTransaction>
+@using Project.Utils
+
+@{
+    ViewData["Title"] = "Borrowing Item List Page";
+}
+
+<div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 py-10">
+    <p>Borrowing Item List:</p>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="flex flex-row items-center justify-start mb-4 gap-4">
+                <div class="w-10 h-10">
+                    <img src="data:image/jpeg;base64,@item.Item.Image" alt="@item.Item.Name" class="rounded" />
+                </div>
+                <p class="text-gray-600">Item Name: <strong>@item.Item.Name</strong></p>
+                <p class="text-gray-600">Quantity: <strong>@item.Quantity</strong></p>
+                <p class="text-gray-600">Borrow Date: <strong>@item.RequestDate</strong></p>
+                <p class="text-gray-600">Due Date: <strong>@item.DueDate</strong></p>
+                <p class="text-gray-600">Return Date: <strong>@item.ReturnDate</strong></p>
+
+                <div class="flex justify-end gap-2">
+                    <form asp-controller="Manager" asp-action="ManageBorrowItem" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="itemId" value="@item.Id" />
+                        <div class="flex gap-2">
+                            @if (item.Status == ItemStatus.Borrowing)
+                            {
+                                <button type="submit" name="status" value="@ItemStatus.Returned.ToString()"
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                    Return
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" name="status" value="@ItemStatus.Borrowing.ToString()"
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                    Borrowing
+                                </button>
+                            }
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-gray-500">No borrowing item available.</p>
+    }
+</div>

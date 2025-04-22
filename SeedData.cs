@@ -14,6 +14,8 @@ namespace Project
                 serviceProvider.GetRequiredService<DbContextOptions<DataContext>>()
             );
 
+            CreateQuartzTable(context);
+
             #region user
             string password = "quametmoi";
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
@@ -131,6 +133,13 @@ namespace Project
             context.Categories.AddRange(categoriesList);
             context.Items.AddRange(itemsList);
             context.SaveChanges();
+        }
+
+        private static void CreateQuartzTable(DataContext context)
+        {
+            var sqlPath = Path.Combine(Directory.GetCurrentDirectory(), "tables_mysql_innodb.sql");
+            var sqlQuery = File.ReadAllText(sqlPath);
+            context.Database.ExecuteSqlRaw(sqlQuery);
         }
     }
 }

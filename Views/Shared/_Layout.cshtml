@@ -27,7 +27,9 @@
                         }
                         else
                         {
-                            <a class="text-gray-700" asp-controller="Manager" asp-action="Index">Borrow Request</a>
+                            <a class="text-gray-700" asp-controller="Manager" asp-action="BorrowRequest">Borrow Request</a>
+                            <a class="text-gray-700" asp-controller="Manager" asp-action="BorrowingItemList">Borrowing Item
+                                List</a>
                             <span class="text-gray-700">Welcome, @ViewBag.User.Name!</span>
                             <form class="inline-block" asp-controller="Home" asp-action="Logout" method="post">
                                 <button type="submit" class="text-gray-700">Logout</button>

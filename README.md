@@ -40,7 +40,7 @@ dotnet ef migrations add InitMigrations
 ```
 
 ```
-dotnet ef migrations update database
+dotnet ef database update
 ```
 
 ```
