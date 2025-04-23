@@ -4,65 +4,31 @@
     ViewData["Title"] = "Profile";
 }
 
-<div class="flex flex-col items-center min-h-screen bg-gray-100 py-10">
-    <h1 class="text-4xl font-bold mb-4">Profile</h1>
-    <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-4 text-center">@Model.Name</h2>
-        <p class="text-gray-700 text-center mb-2">Email: @Model.Email</p>
-        <p class="text-gray-700 text-center mb-2">Role: @Model.Role</p>
-        <div class="flex justify-center mt-4">
-            <button type="button" onclick="toggleModal(true)"
-                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Edit Profile
-            </button>
+<div class="flex flex-col md:flex-row min-h-screen w-full" x-data="{ tab: 'profile' }">
+    <!-- Sidebar / Tabs -->
+    <div class="w-full md:w-1/4 bg-white border-r p-4">
+        <button @@click="tab = 'profile'"
+            class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 mb-2 rounded"
+            :class="{ 'bg-blue-500 text-white': tab === 'profile' }">
+            Profile
+        </button>
+        <button @@click="tab = 'items'"
+            class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded"
+            :class="{ 'bg-blue-500 text-white': tab === 'items' }">
+            Items
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow bg-gray-100 py-10 px-6 w-full">
+        <!-- Profile Tab -->
+        <div x-show="tab === 'profile'" x-cloak class="flex flex-col items-center">
+            @Html.Partial("_Profile", @Model)
+        </div>
+
+        <!-- Items Tab -->
+        <div x-show="tab === 'items'" x-cloak class="flex flex-col items-center">
+            @Html.Partial("_Items", ViewData["Items"] as List<Project.Models.Item>)
         </div>
     </div>
 </div>
-
-<!-- Modal -->
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
-        <h2 class="text-xl font-bold mb-4 text-center">Edit Profile</h2>
-        <form asp-controller="User" asp-action="UpdateProfile" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="Id" value="@Model.Id" />
-
-            <div class="mb-4">
-                <label class="block mb-1 text-gray-700">Name</label>
-                <input type="text" name="Name" value="@Model.Name"
-                    class="w-full border border-gray-300 rounded px-3 py-2" required />
-            </div>
-            <div class="mb-4">
-                <label class="block mb-1 text-gray-700">Username</label>
-                <input type="text" name="Username" value="@Model.Username"
-                    class="w-full border border-gray-300 rounded px-3 py-2" required />
-            </div>
-            <div class="mb-4">
-                <label class="block mb-1 text-gray-700">Password</label>
-                <input type="password" name="Password" class="w-full border border-gray-300 rounded px-3 py-2" />
-            </div>
-            <div class="mb-4">
-                <label class="block mb-1 text-gray-700">Phone Number</label>
-                <input type="text" name="PhoneNumber" value="@Model.PhoneNumber"
-                    class="w-full border border-gray-300 rounded px-3 py-2" />
-            </div>
-
-            <div class="flex justify-end gap-2 mt-4">
-                <button type="button" onclick="toggleModal(false)"
-                    class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Cancel</button>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save</button>
-            </div>
-        </form>
-        <button onclick="toggleModal(false)"
-            class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl">&times;</button>
-    </div>
-</div>
-
-@section Scripts {
-    <script>
-        function toggleModal(show) {
-            const modal = document.getElementById('editModal');
-            modal.classList.toggle('hidden', !show);
-        }
-    </script>
-}

@@ -1,0 +1,89 @@
+@model List<Project.Models.Item>
+
+<!-- Items Tab -->
+<h1 class="text-4xl font-bold mb-6">Items</h1>
+<div class="bg-white p-6 rounded shadow w-full max-w-2xl">
+    <div class="flex items-center justify-end">
+        <button type="button" class="bg-green-500 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded"
+            onclick="toggleItemModal(true)">
+            Add Item
+        </button>
+    </div>
+    @if (Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="p-4 mb-2 bg-white rounded shadow">
+                <h3 class="text-lg font-semibold">@item.Name</h3>
+                <p class="text-gray-700">@item.Quantity</p>
+                <div class="flex items-center justify-end">
+                    <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded mr-2"
+                        onclick="toggleItemModal(true, @Json.Serialize(item))">
+                        Edit
+                    </button>
+                    <form asp-controller="Profile" asp-action="DeleteItem" data-ajax="true" data-ajax-method="POST"
+                        data-ajax-complete="location.reload()">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No items found.</p>
+    }
+</div>
+
+<!-- Modal -->
+<div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50" id="itemModal">
+    <div class="relative w-auto my-6 mx-auto max-w-3xl">
+        <div class="bg-white shadow-lg rounded px-8 pt-6 pb-8 mb-4">
+            <button type="button" class="absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-500"
+                onclick="toggleItemModal(false)">
+                &times;
+            </button>
+            <h1 class="text-3xl font-bold mb-4">Edit Item</h1>
+            <form asp-controller="Profile" asp-action="EditItem" data-ajax="true" data-ajax-method="POST"
+                data-ajax-complete="toggleItemModal(false)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="name" name="name" type="text" required />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="quantity">Quantity</label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="quantity" name="quantity" type="number" required />
+                </div>
+                <div class="flex items-center justify-end">
+                    <button type="button"
+                        class="bg-gray-400 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded"
+                        onclick="toggleItemModal(false)">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleItemModal(show, item = {}) {
+        const modal = document.getElementById('itemModal');
+        modal.classList.toggle('hidden', !show);
+        if (show) {
+            document.getElementById('name').value = item.name || '';
+            document.getElementById('quantity').value = item.quantity || '';
+        }
+    }
+</script>

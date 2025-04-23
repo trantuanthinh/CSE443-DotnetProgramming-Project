@@ -1,0 +1,72 @@
+@model Project.Models.User
+
+<!-- Profile Tab -->
+<h1 class="text-4xl font-bold mb-6">Profile</h1>
+<div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-semibold text-center mb-4">@Model.Name</h2>
+    <p class="text-gray-600 text-center mb-2">Email: <span class="font-medium">@Model.Email</span></p>
+    <p class="text-gray-600 text-center mb-4">Role: <span class="font-medium">@Model.Role</span></p>
+    <div class="flex justify-center">
+        <button type="button" onclick="toggleModal(true)"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded transition">
+            Edit Profile
+        </button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 items-center justify-center hidden z-50">
+    <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-xl relative">
+        <h2 class="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
+        <form asp-controller="User" asp-action="UpdateProfile" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" value="@Model.Id" />
+
+            <div>
+                <label class="block text-gray-700 mb-1">Name</label>
+                <input type="text" name="Name" value="@Model.Name"
+                    class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required />
+            </div>
+            <div>
+                <label class="block text-gray-700 mb-1">Username</label>
+                <input type="text" name="Username" value="@Model.Username"
+                    class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required />
+            </div>
+            <div>
+                <label class="block text-gray-700 mb-1">Password</label>
+                <input type="password" name="Password"
+                    class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+            <div>
+                <label class="block text-gray-700 mb-1">Phone Number</label>
+                <input type="text" name="PhoneNumber" value="@Model.PhoneNumber"
+                    class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" onclick="toggleModal(false)"
+                    class="bg-gray-400 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
+                    Save
+                </button>
+            </div>
+        </form>
+        <button onclick="toggleModal(false)"
+            class="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold">
+            &times;
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleModal(show) {
+            const modal = document.getElementById('editModal');
+            modal.classList.toggle('hidden', !show);
+        }
+    </script>
+}
