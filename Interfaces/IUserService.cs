@@ -1,5 +1,3 @@
-using Project.Models;
-
 namespace Project.Interfaces
 {
     public interface IUserService

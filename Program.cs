@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Project;
 using Project.AppContext;
 using Project.AutoJobs;
@@ -10,9 +9,6 @@ using Project.MailServices;
 using Project.Repositories;
 using Project.Services;
 using Quartz;
-using Quartz.Impl;
-using Quartz.Logging;
-using Quartz.Spi;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +20,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 );
 
 builder.Services.AddSession();
+builder.Services.AddSignalR();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddQuartz(store =>
@@ -57,10 +54,14 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IBorrowTransactionService, BorrowTransactionService>();
+builder.Services.AddScoped<IConversationService, ConversationService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ItemRepository>();
 builder.Services.AddScoped<BorrowTransactionRepository>();
+builder.Services.AddScoped<ConversationRepository>();
+builder.Services.AddScoped<MessageRepository>();
 
 builder.Services.AddScoped<CheckOverDue>();
 

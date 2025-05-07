@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core;
 using Project.Interfaces;
@@ -132,7 +131,7 @@ namespace Project.Controllers
             return View(
                 new ErrorViewModel
                 {
-//                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                    //                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
                 }
             );
         }

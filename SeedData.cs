@@ -1,4 +1,3 @@
-using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using Project.AppContext;
 using Project.Models;
