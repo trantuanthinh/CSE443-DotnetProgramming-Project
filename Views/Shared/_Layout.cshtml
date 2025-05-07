@@ -10,34 +10,38 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
     <script src="https://unpkg.com/alpinejs" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <header>
-        <nav class="bg-white shadow mb-3">
-            <div class="container mx-auto px-4">
+        <nav class="bg-white shadow-sm border-b">
+            <div class="container mx-auto px-6 py-4">
                 <div class="flex justify-between items-center">
-                    <a class="text-xl font-bold" asp-controller="Home" asp-action="Index">Project</a>
-                    <div class="flex space-x-4">
-                        <a class="text-gray-700" asp-controller="Home" asp-action="Index">Home</a>
+                    <!-- Logo -->
+                    <a class="text-2xl font-bold text-gray-800 hover:text-black transition" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-microscope mr-2"></i>Lab Equipment Portal
+                    </a>
+
+                    <!-- Navigation links -->
+                    <div class="flex space-x-6 text-base font-medium">
+                        <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Home" asp-action="Index">Home</a>
 
                         @if (ViewBag.User == null)
                         {
-                            <a class="text-gray-700" asp-controller="Auth" asp-action="SignIn">Sign In</a>
-                            <a class="text-gray-700" asp-controller="Auth" asp-action="SignUp">Sign Up</a>
+                            <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Auth" asp-action="SignIn">Sign In</a>
+                            <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Auth" asp-action="SignUp">Sign Up</a>
                         }
                         else
                         {
-                            <a class="text-gray-700" asp-controller="Manager" asp-action="BorrowRequest">Borrow Request</a>
-                            <a class="text-gray-700" asp-controller="Manager" asp-action="BorrowingItemList">Borrowing Item
-                                List</a>
-                            <span class="text-gray-700">Welcome, @ViewBag.User.Name!</span>
+                            <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Manager" asp-action="BorrowRequest">Borrow Request</a>
+                            <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Manager" asp-action="BorrowingItemList">Borrowing List</a>
+                            <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Profile" asp-action="Index">Profile</a>
+                            <span class="text-gray-600 px-2">Welcome, <strong>@ViewBag.User.Name!</strong></span>
                             <form class="inline-block" asp-controller="Home" asp-action="Logout" method="post">
-                                <button type="submit" class="text-gray-700">Logout</button>
+                                <button type="submit" class="text-gray-700 hover:text-black hover:font-semibold transition">Logout</button>
                             </form>
-                            <a class="text-gray-700" asp-controller="Profile" asp-action="Index">Profile</a>
                         }
-
                     </div>
                 </div>
             </div>
@@ -49,11 +53,11 @@
         </main>
     </div>
 
-    <footer class="border-t py-4 text-center text-gray-600">
-        <div class="container mx-auto">
-            &copy; 2025 - Project - <a asp-controller="Home" asp-action="Privacy" class="text-blue-500">Privacy</a>
-        </div>
-    </footer>
+<!--     <footer class="border-t py-4 text-center text-gray-600"> -->
+<!--         <div class="container mx-auto"> -->
+<!--             &copy; 2025 - Project - <a asp-controller="Home" asp-action="Privacy" class="text-blue-500">Privacy</a> -->
+<!--         </div> -->
+<!--     </footer> -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
