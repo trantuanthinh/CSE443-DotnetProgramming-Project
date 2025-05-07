@@ -1,6 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using Project.Interfaces;
-using Project.Models;
 using Project.Repositories;
 
 namespace Project.Services
