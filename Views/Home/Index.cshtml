@@ -5,7 +5,6 @@
 }
 
 <div class="flex flex-col justify-center items-center min-h-screen py-10">
-
     @if (Model != null)
     {
         <div class="mb-6 w-full max-w-md relative">
@@ -13,38 +12,13 @@
                 class="w-full pl-10 p-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 outline-none" />
         </div>
 
-        @if (Model.Any())
-        {
-            <div id="itemList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 w-full">
-                @foreach (var item in Model)
-                {
-                    <div class="searchable border rounded-lg shadow hover:shadow-lg transition p-4 flex flex-col items-center text-center"
-                        data-name="@item.Name.ToLower()">
-                        <div class="w-32 h-32 mb-3 bg-gray-100">
-                            <img src="data:image/jpeg;base64,@item.Image" alt="@item.Name" class="w-30 h-30 object-cover rounded" />
-                        </div>
-
-                        <p class="text-sm font-semibold mb-1 truncate">@item.Name</p>
-                        <p class="text-xs text-gray-500 mb-2">
-                            Available: <span class="font-medium">@item.Quantity</span>
-                        </p>
-
-                        <button type="button"
-                            class="bg-black text-white text-sm font-medium px-3 py-1 rounded hover:bg-gray-800 disabled:opacity-50"
-                            onclick="openModal('@item.Id', '@item.Name', @item.Quantity)" @(item.Quantity == 0 ? "disabled" : "")>
-                            Borrow
-                        </button>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <p class="text-gray-500">No items found.</p>
-        }
+        <div id="itemContainer">
+            <partial name="_ItemList" model="@Model" />
+        </div>
     }
 </div>
 
+<!-- Modal -->
 <div id="borrowModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 px-4">
     <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md relative animate-fadeIn">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Borrow Book</h2>
@@ -82,6 +56,7 @@
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function openModal(itemId, itemName, maxQuantity) {
             document.getElementById("modalItemId").value = itemId;
@@ -101,16 +76,17 @@
             document.getElementById("requestDate").setAttribute("min", today);
         });
 
-        document.getElementById("searchInput").addEventListener("input", function () {
-            const searchValue = this.value.toLowerCase();
-            const items = document.querySelectorAll(".searchable");
-
-            items.forEach(item => {
-                const name = item.dataset.name;
-                if (name.includes(searchValue)) {
-                    item.classList.remove("hidden");
-                } else {
-                    item.classList.add("hidden");
+        $('#searchInput').on('input', function () {
+            const query = $(this).val();
+            $.ajax({
+                url: '@Url.Action("Search", "Home")',
+                type: 'GET',
+                data: { query: query },
+                success: function (result) {
+                    $('#itemContainer').html(result);
+                },
+                error: function () {
+                    $('#itemContainer').html('<p class="text-red-500">Error loading items.</p>');
                 }
             });
         });

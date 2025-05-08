@@ -34,10 +34,11 @@
                         }
                         else
                         {
+                            <span class="text-gray-600 px-2">Welcome, <strong>@ViewBag.User.Name!</strong></span>
+                            
                             <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Manager" asp-action="BorrowRequest">Borrow Request</a>
                             <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Manager" asp-action="BorrowingItemList">Borrowing List</a>
                             <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Profile" asp-action="Index">Profile</a>
-                            <span class="text-gray-600 px-2">Welcome, <strong>@ViewBag.User.Name!</strong></span>
                             <form class="inline-block" asp-controller="Home" asp-action="Logout" method="post">
                                 <button type="submit" class="text-gray-700 hover:text-black hover:font-semibold transition">Logout</button>
                             </form>

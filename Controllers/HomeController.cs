@@ -23,6 +23,20 @@ namespace Project.Controllers
             return View(items);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Search(string query)
+        {
+            var items = await _itemService.GetItems();
+
+            var filtered = string.IsNullOrWhiteSpace(query)
+                ? items
+                : items
+                    .Where(i => i.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+            return PartialView("_ItemList", filtered);
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("CurrentUser");
