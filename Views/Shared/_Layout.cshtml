@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@using Project.Utils
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -19,6 +22,7 @@
             <div class="container mx-auto px-6 py-4">
                 <div class="flex justify-between items-center">
                     <!-- Logo -->
+
                     <a class="text-2xl font-bold text-gray-800 hover:text-black transition" asp-controller="Home"
                         asp-action="Index">
                         <i class="fas fa-microscope mr-2"></i>Lab Equipment Portal
@@ -41,10 +45,13 @@
                                 Welcome, <strong>@User.Identity.Name!</strong>
                             </span>
 
-                            <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
-                                asp-controller="Manager" asp-action="BorrowRequest">Borrow Request</a>
-                            <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
-                                asp-controller="Manager" asp-action="BorrowingItemList">Borrowing List</a>
+                            @if (User.HasClaim(ClaimTypes.Role, UserType.Manager.ToString()))
+                            {
+                                <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
+                                    asp-controller="Manager" asp-action="BorrowRequest">Borrow Request</a>
+                                <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
+                                    asp-controller="Manager" asp-action="BorrowingItemList">Borrowing List</a>
+                            }
                             <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
                                 asp-controller="Profile" asp-action="Index">Profile</a>
 

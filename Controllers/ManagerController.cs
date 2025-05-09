@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core;
 using Project.Interfaces;
@@ -20,6 +21,7 @@ namespace Project.Controllers
         private readonly IBorrowTransactionService _borrowTransactionService =
             borrowTransactionService;
 
+        [Authorize(Roles = nameof(UserType.Manager))]
         public async Task<IActionResult> BorrowRequest()
         {
             var items = await _borrowTransactionService.GetItems();
@@ -27,6 +29,7 @@ namespace Project.Controllers
             return View(filterList);
         }
 
+        [Authorize(Roles = nameof(UserType.Manager))]
         public async Task<IActionResult> BorrowingItemList()
         {
             var items = await _borrowTransactionService.GetItems();
@@ -40,6 +43,7 @@ namespace Project.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = nameof(UserType.Manager))]
         public async Task<IActionResult> BorrowResponse(Guid itemId, ItemStatus status)
         {
             if (!User.Identity.IsAuthenticated)
@@ -134,7 +138,7 @@ namespace Project.Controllers
             return View(
                 new ErrorViewModel
                 {
-                    //                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                    //RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
                 }
             );
         }

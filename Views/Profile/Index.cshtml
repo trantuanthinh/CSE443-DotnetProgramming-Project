@@ -1,3 +1,5 @@
+@using Project.Utils;
+@using System.Security.Claims;
 @model Project.Models.User
 
 @{
@@ -10,23 +12,24 @@
     <div class="w-full md:w-1/4 bg-white border-r p-4">
         <ul class="space-y-2">
             <li>
-                <a href="#"
-                    @@click="tab = 'profile'"
+                <a href="#" @@click="tab = 'profile'"
                     class="flex items-center px-4 py-2 rounded hover:bg-gray-100 text-gray-700"
                     :class="{ 'font-bold': tab === 'profile' }">
                     <i class="bi bi-person-fill mr-2"></i>
                     <span>Profile</span>
                 </a>
             </li>
-            <li>
-                <a href="#"
-                    @@click="tab = 'items'"
-                    class="flex items-center px-4 py-2 rounded hover:bg-gray-100 text-gray-700"
-                    :class="{ 'font-bold': tab === 'items' }">
-                    <i class="bi bi-box-seam mr-2"></i>
-                    <span>Inventory</span>
-                </a>
-            </li>
+            @if (User.HasClaim(ClaimTypes.Role, UserType.Manager.ToString()))
+            {
+                <li>
+                    <a href="#" @@click="tab = 'items'"
+                        class="flex items-center px-4 py-2 rounded hover:bg-gray-100 text-gray-700"
+                        :class="{ 'font-bold': tab === 'items' }">
+                        <i class="bi bi-box-seam mr-2"></i>
+                        <span>Inventory</span>
+                    </a>
+                </li>
+            }
         </ul>
     </div>
 
@@ -34,14 +37,15 @@
     <div class="flex-grow bg-gray-100 py-10 px-6 w-full">
         <!-- Profile Tab -->
         <div x-show="tab === 'profile'" x-cloak class="flex flex-col items-center">
-            @* @Html.Partial("_Profile", @Model) *@
-            <partial name="_Profile" model="@Model" />
+            <partial name="_Profile" model="@ViewData["CurrentUser"]" />
         </div>
 
-        <!-- Items Tab -->
-        <div x-show="tab === 'items'" x-cloak class="flex flex-col items-center">
-            @* @Html.Partial("_Items", ViewData["Items"] as List<Project.Models.Item>) *@
-            <partial name="_Items" model="@ViewData["Items"]" />
-        </div>
+        @if (User.HasClaim(ClaimTypes.Role, UserType.Manager.ToString()))
+        {
+            <!-- Items Tab -->
+            <div x-show="tab === 'items'" x-cloak class="flex flex-col items-center">
+                <partial name="_Items" model="@ViewData["Items"]" />
+            </div>
+        }
     </div>
 </div>
