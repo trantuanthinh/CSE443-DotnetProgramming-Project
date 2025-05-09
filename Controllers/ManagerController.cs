@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core;
 using Project.Interfaces;
@@ -41,7 +42,7 @@ namespace Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BorrowResponse(Guid itemId, ItemStatus status)
         {
-            if (CurrentUser == null)
+            if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -66,7 +67,9 @@ namespace Project.Controllers
                     return RedirectToAction("Index", "Manager");
                 }
 
-                borrowTransaction.ManagerId = CurrentUser.Id;
+                var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var id = Guid.Parse(idClaim.Value);
+                borrowTransaction.ManagerId = id;
                 borrowTransaction.DueDate = borrowTransaction.RequestDate.AddDays(7);
                 borrowTransaction.Status = status;
                 if (!await _borrowTransactionService.EditItem(borrowTransaction))
@@ -107,7 +110,7 @@ namespace Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageBorrowItem(Guid itemId, ItemStatus status)
         {
-            if (CurrentUser == null)
+            if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }

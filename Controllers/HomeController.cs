@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core;
 using Project.Interfaces;
@@ -37,9 +40,9 @@ namespace Project.Controllers
             return PartialView("_ItemList", filtered);
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Remove("CurrentUser");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Index", "Home");
         }
@@ -52,7 +55,7 @@ namespace Project.Controllers
             DateTime requestDate
         )
         {
-            if (CurrentUser == null)
+            if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -63,7 +66,8 @@ namespace Project.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var id = CurrentUser.Id;
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            var id = Guid.Parse(idClaim.Value);
             var item = new BorrowTransaction
             {
                 Id = Guid.NewGuid(),

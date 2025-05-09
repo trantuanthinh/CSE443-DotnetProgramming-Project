@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Project;
 using Project.AppContext;
@@ -62,6 +63,14 @@ builder.Services.AddScoped<ItemRepository>();
 builder.Services.AddScoped<BorrowTransactionRepository>();
 builder.Services.AddScoped<ConversationRepository>();
 builder.Services.AddScoped<MessageRepository>();
+builder
+    .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Auth/SignIn";
+        options.LogoutPath = "/Home/Logout";
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    });
 
 builder.Services.AddScoped<CheckOverDue>();
 
@@ -79,6 +88,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");

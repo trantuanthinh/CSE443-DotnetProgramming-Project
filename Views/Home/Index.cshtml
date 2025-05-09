@@ -58,7 +58,13 @@
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        const isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());
+
         function openModal(itemId, itemName, maxQuantity) {
+            if (!isAuthenticated) {
+                window.location.href = '/Auth/SignIn';
+                return;
+            }
             document.getElementById("modalItemId").value = itemId;
             document.getElementById("modalItemName").innerText = `Item: ${ itemName }`;
             const quantityInput = document.getElementById("quantityInput");
