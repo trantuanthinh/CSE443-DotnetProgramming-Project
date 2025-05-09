@@ -7,10 +7,6 @@
     <p class="text-gray-600 text-center">Email: <span class="font-medium">@Model.Email</span></p>
     <p class="text-gray-600 text-center mb-4">Role: <span class="font-medium">@Model.Role</span></p>
     <div class="flex justify-center">
-        <!--         <button type="button" onclick="toggleModal(true)" -->
-        <!--             class="bg-black text-white px-4 py-2 rounded hover:bg-gray-600 transition"> -->
-        <!--             Edit Profile -->
-        <!--         </button> -->
         <button class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" onclick="toggleModal(true)">
             Edit Profile
         </button>
@@ -18,13 +14,13 @@
 </div>
 
 <!-- Modal -->
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50">
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50 items-center justify-center">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="bg-white p-6 rounded shadow-md w-full max-w-lg relative">
             <h2 class="text-xl font-bold mb-4 text-center">Edit Profile</h2>
-            <form asp-controller="User" asp-action="UpdateProfile" method="post" class="space-y-4">
+            <form asp-controller="Profile" asp-action="UpdateProfile" method="post" class="space-y-4">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" id="id" name="id" value="@Model.Id" />
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Name</label>
@@ -34,18 +30,18 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Username</label>
-                    <input type="text" name="Username" value="@Model.Username"
+                    <input type="text" id="username" name="username" value="@Model.Username"
                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
                         required />
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Password</label>
-                    <input type="password" name="Password"
+                    <input type="password" id="password" name="password"
                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Phone Number</label>
-                    <input type="text" name="PhoneNumber" value="@Model.PhoneNumber"
+                    <input type="text" id="phoneNumber" name="phoneNumber" value="@Model.PhoneNumber"
                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" />
                 </div>
 
@@ -67,15 +63,9 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        function toggleModal(show) {
-            const modal = document.getElementById('editModal');
-            if (show) {
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
-        }
-    </script>
-}
+<script>
+    function toggleModal(show) {
+        const modal = document.getElementById('editModal');
+        modal.classList.toggle('hidden', !show);
+    }
+</script>

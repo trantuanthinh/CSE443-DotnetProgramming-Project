@@ -22,5 +22,25 @@ namespace Project.Services
         {
             return await _repository.SelectAll().Where(item => item.Id == id).FirstOrDefaultAsync();
         }
+
+        public async Task<bool> EditUser(User item)
+        {
+            var existingItem = await GetUser(item.Id);
+            if (existingItem == null)
+            {
+                return false;
+            }
+
+            existingItem.Name = item.Name;
+            existingItem.Username = item.Username;
+            if (!string.IsNullOrWhiteSpace(item.Password))
+            {
+                existingItem.Password = BCrypt.Net.BCrypt.HashPassword(item.Password);
+            }
+            existingItem.PhoneNumber = item.PhoneNumber;
+
+            _repository.Update(existingItem);
+            return await _repository.SaveAsync();
+        }
     }
 }

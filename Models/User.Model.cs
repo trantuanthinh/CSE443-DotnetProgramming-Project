@@ -12,8 +12,7 @@ namespace Project.Models
         public string? Password { get; set; }
         public string? PhoneNumber { get; set; }
 
-        [Required]
-        public required LoginType LoginType { get; set; }
+        public LoginType? LoginType { get; set; }
 
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }

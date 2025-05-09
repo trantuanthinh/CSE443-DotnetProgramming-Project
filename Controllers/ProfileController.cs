@@ -40,6 +40,41 @@ namespace Project.Controllers
             return View();
         }
 
+        #region Profile
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile(IFormCollection form)
+        {
+            var idValue = Guid.Parse(form["id"]);
+            var name = form["name"];
+            var userName = form["username"];
+            var phoneNumber = form["phoneNumber"];
+            var password = form["password"];
+
+            var user = await _userService.GetUser(idValue);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            user.Name = name;
+            user.Username = userName;
+            user.PhoneNumber = phoneNumber;
+            if (password != string.Empty)
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(password);
+            }
+            bool isUpdated = await _userService.EditUser(user);
+            if (!isUpdated)
+            {
+                return BadRequest();
+            }
+            return RedirectToAction("Index", "Profile");
+        }
+        #endregion
+
+        #region Item
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = nameof(UserType.Manager))]
@@ -92,5 +127,19 @@ namespace Project.Controllers
             }
             return RedirectToAction("Index", "Profile");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = nameof(UserType.Manager))]
+        public async Task<IActionResult> DeleteItem(Guid id)
+        {
+            bool isDeleted = await _itemService.DeleteItem(id);
+            if (!isDeleted)
+            {
+                return BadRequest();
+            }
+            return RedirectToAction("Index", "Profile");
+        }
+        #endregion
     }
 }

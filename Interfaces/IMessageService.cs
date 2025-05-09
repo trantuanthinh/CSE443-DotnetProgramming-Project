@@ -4,7 +4,7 @@ namespace Project.Interfaces
 {
     public interface IMessageService
     {
-        Task<bool> CreateMessage(Message _item);
+        Task<bool> CreateMessage(Message item);
         Task<bool> DeleteMessage(Guid id);
     }
 }
