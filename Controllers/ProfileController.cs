@@ -18,10 +18,15 @@ namespace Project.Controllers
         {
             var items = await _itemService.GetItems();
             ViewData["Items"] = items;
+
             var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             var id = Guid.Parse(idClaim.Value);
             var user = await _userService.GetUser(id);
             ViewData["CurrentUser"] = user;
+
+            var userList = await _userService.GetLecturers();
+            ViewData["Users"] = userList;
+
             return View();
         }
     }

@@ -1,0 +1,27 @@
+@model ICollection<Project.Models.User>
+
+<!-- User List Tab -->
+<div x-show="tab === 'users'" x-cloak class="flex flex-col items-center">
+    <h1 class="text-3xl font-bold mb-6">User List</h1>
+    <div class="overflow-x-auto">
+        <table class="w-full text-md text-gray-700">
+            <thead class="bg-gray-100 text-md uppercase font-semibold">
+                <tr>
+                    <th class="px-6 py-3">Name</th>
+                    <th class="px-6 py-3">Email</th>
+                    <th class="px-6 py-3">Role</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="px-6 py-4">@user.Name</td>
+                        <td class="px-6 py-4">@user.Email</td>
+                        <td class="px-6 py-4">@user.Role</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

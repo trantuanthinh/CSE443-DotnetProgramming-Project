@@ -1,9 +1,12 @@
+@model Project.Models.User
 @using Project.Utils;
 @using System.Security.Claims;
-@model Project.Models.User
 
 @{
     ViewData["Title"] = "Profile";
+    var currentUser = ViewData["CurrentUser"] as Project.Models.User;
+    var items = ViewData["Items"] as IEnumerable<Project.Models.Item>;
+    var users = ViewData["Users"] as ICollection<Project.Models.User>;
 }
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
@@ -22,6 +25,14 @@
             @if (User.HasClaim(ClaimTypes.Role, UserType.Manager.ToString()))
             {
                 <li>
+                    <a href="#" @@click="tab = 'users'"
+                        class="flex items-center px-4 py-2 rounded hover:bg-gray-100 text-gray-700"
+                        :class="{ 'font-bold': tab === 'users' }">
+                        <i class="bi bi-people-fill mr-2"></i>
+                        <span>Manager User List</span>
+                    </a>
+                </li>
+                <li>
                     <a href="#" @@click="tab = 'items'"
                         class="flex items-center px-4 py-2 rounded hover:bg-gray-100 text-gray-700"
                         :class="{ 'font-bold': tab === 'items' }">
@@ -37,14 +48,18 @@
     <div class="flex-grow bg-gray-100 py-10 px-6 w-full">
         <!-- Profile Tab -->
         <div x-show="tab === 'profile'" x-cloak class="flex flex-col items-center">
-            <partial name="_Profile" model="@ViewData["CurrentUser"]" />
+            <partial name="_Profile" model="currentUser" />
         </div>
 
         @if (User.HasClaim(ClaimTypes.Role, UserType.Manager.ToString()))
         {
             <!-- Items Tab -->
             <div x-show="tab === 'items'" x-cloak class="flex flex-col items-center">
-                <partial name="_Items" model="@ViewData["Items"]" />
+                <partial name="_Items" model="items" />
+            </div>
+            <!-- User List Tab -->
+            <div x-show="tab === 'users'" x-cloak class="flex flex-col items-center">
+                <partial name="_UserList" model="users" />
             </div>
         }
     </div>

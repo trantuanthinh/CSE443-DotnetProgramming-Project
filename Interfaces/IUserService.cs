@@ -4,6 +4,7 @@ namespace Project.Interfaces
 {
     public interface IUserService
     {
+        Task<ICollection<User>> GetLecturers();
         Task<User> GetUser(Guid id);
     }
 }
