@@ -1,4 +1,5 @@
 @model IEnumerable<Project.Models.Item>
+@using Project.Utils;
 
 @if (Model.Any())
 {
@@ -16,12 +17,21 @@
                     Available: <span class="font-medium">@item.Quantity</span>
                 </p>
 
+                @{
+                    bool isOutOfStock = item.Quantity == 0;
+                    bool isManager = User.IsInRole(UserType.Manager.ToString());
+                    string buttonText = isOutOfStock ? "Out of stock" : (isManager ? "Manager cannot borrow" : "Borrow");
+                    string disabledAttr = (isOutOfStock || isManager) ? "disabled" : "";
+                    string onClickAttr = (!isOutOfStock && !isManager) ? $"openModal('{item.Id}', '{item.Name}', {item.Quantity})" : "";
+                }
+
                 <button type="button"
-                    class="bg-black text-white text-sm font-medium px-3 py-1 rounded hover:bg-gray-800 disabled:opacity-50"
-                    onclick="openModal('@item.Id', '@item.Name', @item.Quantity)" @(item.Quantity == 0 ? "disabled" : "")>
-                    Borrow
+                        class="bg-black text-white text-sm font-medium px-3 py-1 rounded hover:bg-gray-800 disabled:opacity-50 disabled:bg-red-600"
+                        onclick="@onClickAttr"
+                        @disabledAttr>
+                    @buttonText
                 </button>
-            </div>
+    </div>
         }
     </div>
 }
