@@ -9,6 +9,7 @@ using Project.Interfaces;
 using Project.MailServices;
 using Project.Repositories;
 using Project.Services;
+using Project.Utils;
 using Quartz;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -50,15 +51,18 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<BaseController>();
 builder.Services.AddScoped<MappingHelper>();
 builder.Services.AddSingleton<MailService>();
+builder.Services.AddSingleton<SharedService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IBorrowTransactionService, BorrowTransactionService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<ItemRepository>();
 builder.Services.AddScoped<BorrowTransactionRepository>();
 builder.Services.AddScoped<ConversationRepository>();

@@ -19,6 +19,12 @@ namespace Project.Services
             return await _repository.SelectAll().Where(item => item.Id == id).FirstOrDefaultAsync();
         }
 
+        public Task<bool> CreateItem(Item item)
+        {
+            _repository.Add(item);
+            return _repository.SaveAsync();
+        }
+
         public async Task<bool> EditItem(Item item)
         {
             var existingItem = await GetItem(item.Id);
@@ -30,6 +36,7 @@ namespace Project.Services
             existingItem.Name = item.Name;
             existingItem.Quantity = item.Quantity;
             existingItem.CategoryId = item.CategoryId;
+            existingItem.Image = item.Image;
 
             _repository.Update(existingItem);
             return await _repository.SaveAsync();

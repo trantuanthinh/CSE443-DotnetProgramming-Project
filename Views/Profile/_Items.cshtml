@@ -25,19 +25,14 @@
                         <td class="px-6 py-4 whitespace-nowrap text-left">@item.Name</td>
                         <td class="px-6 py-4 text-center">@item.Quantity</td>
                         <td class="flex px-6 py-4 justify-center space-x-4">
-                            <button type="button"
-                                class="text-blue-600 hover:text-blue-800"
-                                onclick='toggleItemModal(true, @Html.Raw(Json.Serialize(item)))'
-                                title="Edit">
+                            <button type="button" class="text-blue-600 hover:text-blue-800"
+                                onclick='toggleItemModal(true, @Html.Raw(Json.Serialize(item)))' title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <form asp-controller="Profile" asp-action="DeleteItem" method="post"
-                                data-ajax="true" data-ajax-method="POST"
-                                data-ajax-complete="location.reload()" class="inline">
+                            <form asp-controller="Profile" asp-action="DeleteItem" method="post" data-ajax="true"
+                                data-ajax-method="POST" data-ajax-complete="location.reload()" class="inline">
                                 <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit"
-                                    class="text-red-600 hover:text-red-800"
-                                    title="Delete">
+                                <button type="submit" class="text-red-600 hover:text-red-800" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
@@ -58,8 +53,10 @@
                 &times;
             </button>
             <h1 class="text-3xl font-bold mb-4">Add Item</h1>
-            <form asp-controller="Profile" asp-action="EditItem" data-ajax="true" data-ajax-method="POST"
-                data-ajax-complete="toggleItemModal(false)">
+            <form asp-controller="Profile" asp-action="HandleItemForm" method="post" enctype="multipart/form-data"
+                data-ajax="false">
+
+                <input type="hidden" id="id" name="id" />
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1" for="name">Name</label>
@@ -75,14 +72,32 @@
                         id="quantity" name="quantity" type="number" required />
                 </div>
 
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1" for="categoryId">Category</label>
+                    <select id="categoryId" name="categoryId"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                        required>
+                        <option value="" disabled>-- Select Category --</option>
+                        @foreach (var category in (IEnumerable<Project.Models.Category>)ViewData["Categories"])
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1" for="image">Image</label>
+                    <input
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                        id="image" name="image" type="file" />
+                </div>
+
                 <div class="flex justify-end gap-3 pt-2">
-                    <button type="button"
-                        class="px-4 py-2 border border-gray-400 text-gray-700 rounded"
+                    <button type="button" class="px-4 py-2 border border-gray-400 text-gray-700 rounded"
                         onclick="toggleItemModal(false)">
                         Cancel
                     </button>
-                    <button type="submit"
-                        class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
+                    <button type="submit" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
                         Save
                     </button>
                 </div>
@@ -95,9 +110,13 @@
     function toggleItemModal(show, item = {}) {
         const modal = document.getElementById('itemModal');
         modal.classList.toggle('hidden', !show);
+
         if (show) {
+            document.getElementById('id').value = item.id || '';
             document.getElementById('name').value = item.name || '';
             document.getElementById('quantity').value = item.quantity || '';
+            document.getElementById('categoryId').value = item.categoryId || '';
+            document.getElementById('image').value = '';
         }
     }
 </script>
