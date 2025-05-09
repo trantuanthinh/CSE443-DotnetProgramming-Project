@@ -1,5 +1,8 @@
+using System.Security.Claims;
 using System.Text.Json;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Project.AppContext;
 using Project.Core;
@@ -41,10 +44,22 @@ public class AuthController : BaseController
         string email = form["email"];
         string password = form["password"];
         User user = await _authService.SignIn(email, password);
-        if (user != null)
+        var claims = new List<Claim>
         {
-            HttpContext.Session.SetObject("CurrentUser", user);
-        }
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
+        };
+
+        var identity = new ClaimsIdentity(
+            claims,
+            CookieAuthenticationDefaults.AuthenticationScheme
+        );
+        var principal = new ClaimsPrincipal(identity);
+
+        // Lưu cookie đăng nhập
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
         return RedirectToAction("Index", "Home");
     }
 

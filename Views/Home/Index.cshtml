@@ -1,4 +1,4 @@
-﻿@* @model List<Project.Models.Item> *@
+@* @model List<Project.Models.Item> *@
 
 @* @{ *@
 @*     ViewData["Title"] = "Home Page"; *@
@@ -118,6 +118,7 @@
 @* } *@
 
 @model List<Project.Models.Item>
+@using Project.Utils;
 
 @{
     ViewData["Title"] = "Home Page";
@@ -125,16 +126,28 @@
 
 <div class="container mx-auto py-8">
     <h1 class="text-3xl font-bold mb-6 text-black text-center">Available Items</h1>
+    @if (Model != null)
+    {
 
-    <div class="mb-6 w-full max-w-md mx-auto">
-        <div class="relative">
-            <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            <input type="text" id="searchInput" placeholder="Search items…"
-                   class="w-full pl-10 p-3 border rounded-md shadow-sm focus:ring-blue-500 focus:border-black outline-none" />
+        <div class="mb-6 w-full max-w-md mx-auto">
+            <div class="relative">
+                <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search items…"
+                       class="w-full pl-10 p-3 border rounded-md shadow-sm focus:ring-blue-500 focus:border-black outline-none" />
+            </div>
         </div>
-    </div>
+
+        <div id="itemContainer">
+            <partial name="_ItemList" model="@Model" />
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-600 text-center">Loading items...</p>
+
+    }
 
     @if (Model != null)
     {
@@ -216,8 +229,15 @@
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        const isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());
+
         function openModal(itemId, itemName, maxQuantity) {
+            if (!isAuthenticated) {
+                window.location.href = '/Auth/SignIn';
+                return;
+            }
             document.getElementById("modalItemId").value = itemId;
             document.getElementById("modalItemName").innerText = `Item: ${itemName}`;
             const quantityInput = document.getElementById("quantityInput");
@@ -235,16 +255,17 @@
             document.getElementById("requestDate").setAttribute("min", today);
         });
 
-        document.getElementById("searchInput").addEventListener("input", function () {
-            const searchValue = this.value.toLowerCase();
-            const items = document.querySelectorAll(".searchable");
-
-            items.forEach(item => {
-                const name = item.dataset.name;
-                if (name.includes(searchValue)) {
-                    item.classList.remove("hidden");
-                } else {
-                    item.classList.add("hidden");
+        $('#searchInput').on('input', function () {
+            const query = $(this).val();
+            $.ajax({
+                url: '@Url.Action("Search", "Home")',
+                type: 'GET',
+                data: { query: query },
+                success: function (result) {
+                    $('#itemContainer').html(result);
+                },
+                error: function () {
+                    $('#itemContainer').html('<p class="text-red-500">Error loading items.</p>');
                 }
             });
         });

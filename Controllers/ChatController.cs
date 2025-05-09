@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core;
 using Project.Interfaces;
@@ -29,7 +30,7 @@ namespace Project.Controllers
             DateTime requestDate
         )
         {
-            if (CurrentUser == null)
+            if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -39,8 +40,8 @@ namespace Project.Controllers
                 _logger.LogInformation("Invalid Date");
                 return RedirectToAction("Index", "Home");
             }
-
-            var id = CurrentUser.Id;
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            var id = Guid.Parse(idClaim.Value);
 
             return RedirectToAction("Index", "Home");
         }

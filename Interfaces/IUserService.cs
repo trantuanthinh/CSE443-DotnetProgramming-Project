@@ -1,7 +1,11 @@
+using Project.Models;
+
 namespace Project.Interfaces
 {
     public interface IUserService
     {
-        // Task<User> GetUser(User user);
+        Task<ICollection<User>> GetLecturers();
+        Task<User> GetUser(Guid id);
+        Task<bool> EditUser(User item);
     }
 }

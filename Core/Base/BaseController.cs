@@ -9,7 +9,6 @@ namespace Project.Core
 {
     public class BaseController : Controller
     {
-        protected User CurrentUser;
         protected readonly IMapper? _mapper;
         protected readonly DataContext? _dataContext;
         protected readonly ILogger? _logger;
@@ -29,11 +28,6 @@ namespace Project.Core
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            CurrentUser = HttpContext.Session.GetObject<User>("CurrentUser");
-            if (CurrentUser != null)
-            {
-                ViewBag.User = CurrentUser;
-            }
             base.OnActionExecuting(context);
         }
     }
