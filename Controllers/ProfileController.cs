@@ -40,105 +40,86 @@ namespace Project.Controllers
             return View();
         }
 
-        #region Profile
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> UpdateProfile(IFormCollection form)
-        {
-            var idValue = Guid.Parse(form["id"]);
-            var name = form["name"];
-            var userName = form["username"];
-            var phoneNumber = form["phoneNumber"];
-            var password = form["password"];
-
-            var user = await _userService.GetUser(idValue);
-            if (user == null)
-            {
-                return BadRequest();
-            }
-
-            user.Name = name;
-            user.Username = userName;
-            user.PhoneNumber = phoneNumber;
-            if (password != string.Empty)
-            {
-                user.Password = BCrypt.Net.BCrypt.HashPassword(password);
-            }
-            bool isUpdated = await _userService.EditUser(user);
-            if (!isUpdated)
-            {
-                return BadRequest();
-            }
-            return RedirectToAction("Index", "Profile");
-        }
-        #endregion
-
         #region Item
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = nameof(UserType.Manager))]
         public async Task<IActionResult> HandleItemForm(IFormCollection form)
         {
-            var idValue = form["id"];
-            Guid? id = string.IsNullOrWhiteSpace(idValue) ? null : Guid.Parse(idValue);
-
-            var name = form["name"];
-            var quantity = int.Parse(form["quantity"]);
-            var categoryId = Guid.Parse(form["categoryId"]);
-            var image = form.Files.GetFile("image");
-            var imageBase64 =
-                image == null || image.Length == 0
-                    ? string.Empty
-                    : _sharedService.ImageToBase64(image);
-
-            if (id.HasValue)
+            try
             {
-                var item = new Item
+                var idValue = form["id"];
+                Guid? id = string.IsNullOrWhiteSpace(idValue) ? null : Guid.Parse(idValue);
+
+                var name = form["name"];
+                var quantity = int.Parse(form["quantity"]);
+                var categoryId = Guid.Parse(form["categoryId"]);
+                var image = form.Files.GetFile("image");
+                var imageBase64 =
+                    image == null || image.Length == 0
+                        ? string.Empty
+                        : _sharedService.ImageToBase64(image);
+
+                if (id.HasValue)
                 {
-                    Id = id.Value,
-                    Name = name,
-                    Quantity = quantity,
-                    CategoryId = categoryId,
-                    Image = imageBase64,
-                };
-                bool isUpdated = await _itemService.EditItem(item);
-                if (!isUpdated)
+                    var item = new Item
+                    {
+                        Id = id.Value,
+                        Name = name,
+                        Quantity = quantity,
+                        CategoryId = categoryId,
+                        Image = imageBase64,
+                    };
+                    bool isUpdated = await _itemService.EditItem(item);
+                    if (!isUpdated)
+                    {
+                        return Json(new { success = false, message = "Update failed." });
+                    }
+                    return Json(new { success = true, message = "Item updated successfully." });
+                }
+                else
                 {
-                    return BadRequest();
+                    id = Guid.NewGuid();
+                    var item = new Item
+                    {
+                        Id = id.Value,
+                        Name = name,
+                        Quantity = quantity,
+                        CategoryId = categoryId,
+                        Image = imageBase64,
+                    };
+                    bool isCreated = await _itemService.CreateItem(item);
+                    if (!isCreated)
+                    {
+                        return Json(new { success = false, message = "Create failed." });
+                    }
+                    return Json(new { success = true, message = "Item created successfully." });
                 }
             }
-            else
+            catch (Exception ex)
             {
-                id = Guid.NewGuid();
-                var item = new Item
-                {
-                    Id = id.Value,
-                    Name = name,
-                    Quantity = quantity,
-                    CategoryId = categoryId,
-                    Image = imageBase64,
-                };
-                bool isCreated = await _itemService.CreateItem(item);
-                if (!isCreated)
-                {
-                    return BadRequest();
-                }
+                _logger.LogError(ex, "Error in HandleItemForm");
+                return Json(new { success = false, message = "An unexpected error occurred." });
             }
-            return RedirectToAction("Index", "Profile");
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = nameof(UserType.Manager))]
-        public async Task<IActionResult> DeleteItem(Guid id)
+        public async Task<IActionResult> DeleteItem([FromBody] Guid id)
         {
-            bool isDeleted = await _itemService.DeleteItem(id);
-            if (!isDeleted)
+            try
             {
-                return BadRequest();
+                bool isDeleted = await _itemService.DeleteItem(id);
+                if (!isDeleted)
+                {
+                    return Json(new { success = false, message = "Delete failed." });
+                }
+                return Json(new { success = true, message = "Item deleted successfully." });
             }
-            return RedirectToAction("Index", "Profile");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting item");
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
         }
         #endregion
     }

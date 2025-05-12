@@ -42,6 +42,13 @@ namespace Project
                     UserType.Lecturer
                 ),
                 (
+                    "ngoctram",
+                    "Ngoc Tram",
+                    "tram@gmail.com",
+                    "987654321",
+                    UserType.Manager
+                ),
+                (
                     "nguyenvana",
                     "Nguyen Van A",
                     "nguyenvana@gmail.com",

@@ -9,6 +9,8 @@
         </button>
     </div>
 
+    <!-- Success/Error Message -->
+    <div id="itemMessage" class="hidden text-sm mt-4 p-2 rounded text-white"></div>
     <div class="overflow-x-auto flex justify-center">
         <table class="w-full text-md text-gray-700">
             <thead class="bg-gray-100 text-md uppercase font-semibold">
@@ -29,9 +31,7 @@
                                 onclick='toggleItemModal(true, @Html.Raw(Json.Serialize(item)))' title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <form asp-controller="Profile" asp-action="DeleteItem" method="post" data-ajax="true"
-                                data-ajax-method="POST" data-ajax-complete="location.reload()" class="inline">
-                                <input type="hidden" name="id" value="@item.Id" />
+                            <form class="delete-form inline" data-id="@item.Id">
                                 <button type="submit" class="text-red-600 hover:text-red-800" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -53,22 +53,19 @@
                 &times;
             </button>
             <h1 class="text-3xl font-bold mb-4">Add Item</h1>
-            <form asp-controller="Profile" asp-action="HandleItemForm" method="post" enctype="multipart/form-data"
-                data-ajax="false">
-
+            <form id="itemForm" asp-controller="Profile" asp-action="HandleItemForm" method="post" enctype="multipart/form-data"
+                onsubmit="submitItemForm(event)">
                 <input type="hidden" id="id" name="id" />
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1" for="name">Name</label>
-                    <input
-                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                    <input class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                         id="name" name="name" type="text" required />
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1" for="quantity">Quantity</label>
-                    <input
-                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                    <input class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                         id="quantity" name="quantity" type="number" required />
                 </div>
 
@@ -87,8 +84,7 @@
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1" for="image">Image</label>
-                    <input
-                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                    <input class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                         id="image" name="image" type="file" />
                 </div>
 
@@ -118,5 +114,68 @@
             document.getElementById('categoryId').value = item.categoryId || '';
             document.getElementById('image').value = '';
         }
+    }
+
+    // Add/Edit submit handler
+    async function submitItemForm(e) {
+        e.preventDefault();
+        const form = document.getElementById("itemForm");
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            showMessage(result.message, result.success);
+
+            if (result.success) {
+                toggleItemModal(false);
+                setTimeout(() => location.reload(), 1500);
+            }
+        } catch (err) {
+            showMessage("Something went wrong.", false);
+        }
+    }
+
+    // Delete item via AJAX
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('.delete-form').forEach(form => {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const id = this.getAttribute("data-id");
+
+                try {
+                    const response = await fetch('/Profile/DeleteItem', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id })
+                    });
+
+                    const result = await response.json();
+                    showMessage(result.message, result.success);
+
+                    if (result.success) {
+                        this.closest('tr').remove();
+                    }
+                } catch (err) {
+                    showMessage("Delete failed.", false);
+                }
+            });
+        });
+    });
+
+    // Show notification
+    function showMessage(message, success) {
+        const msgBox = document.getElementById("itemMessage");
+        msgBox.textContent = message;
+        msgBox.className = "text-sm mt-4 p-2 rounded text-white " + (success ? "bg-green-500" : "bg-red-500");
+        msgBox.classList.remove("hidden");
+
+        setTimeout(() => msgBox.classList.add("hidden"), 3000);
     }
 </script>

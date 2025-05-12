@@ -12,12 +12,12 @@
 
 <div class="flex flex-col md:flex-row min-h-screen w-full" x-data="{ tab: 'profile' }">
     <!-- Sidebar / Tabs -->
-    <div class="w-full md:w-1/4 bg-gray-100 border-r border-gray-200 p-6 flex flex-col">
+    <div class="w-full md:w-1/4 bg-white-100 border-r border-gray-200 p-6 flex flex-col">
         <ul class="space-y-2">
             <li>
                 <a href="#" @@click="tab = 'profile'"
-                class="w-full border border-black font-medium py-3 px-4 rounded-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 hover:bg-gray-200 mb-2"
-                :class="{ 'bg-black text-white hover:bg-gray-900': tab === 'profile', 'bg-white text-gray-800': tab !== 'profile' }">
+                    class="flex items-center px-4 py-2 rounded hover:bg-gray-100 text-gray-700"
+                        :class="{ 'font-bold': tab === 'profile' }">
                     <i class="bi bi-person-fill mr-2"></i>
                     <span>Profile</span>
                 </a>
@@ -27,16 +27,16 @@
             {
                 <li>
                     <a href="#" @@click="tab = 'users'"
-                       class="w-full border border-black font-medium py-3 px-4 rounded-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 hover:bg-gray-200"
-                       :class="{ 'bg-black text-white hover:bg-gray-900': tab === 'users', 'bg-white text-gray-800': tab !== 'users' }">
+                        class="flex items-center px-4 py-2 rounded hover:bg-gray-100 text-gray-700"
+                            :class="{ 'font-bold': tab === 'users' }">
                         <i class="bi bi-people-fill mr-2"></i>
                         <span>Manager User List</span>
                     </a>
                 </li>
                 <li>
                     <a href="#" @@click="tab = 'items'"
-                       class="w-full border border-black font-medium py-3 px-4 rounded-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 hover:bg-gray-200"
-                       :class="{ 'bg-black text-white hover:bg-gray-900': tab === 'items', 'bg-white text-gray-800': tab !== 'items' }">
+                        class="flex items-center px-4 py-2 rounded hover:bg-gray-100 text-gray-700"
+                            :class="{ 'font-bold': tab === 'items' }">
                         <i class="bi bi-box-seam mr-2"></i>
                         <span>Inventory</span>
                     </a>

@@ -1,24 +1,53 @@
 @model ICollection<Project.Models.User>
 
 <!-- User List Tab -->
-<div x-show="tab === 'users'" x-cloak class="flex flex-col items-center">
-    <h1 class="text-3xl font-bold mb-6">User List</h1>
-    <div class="overflow-x-auto">
+<div x-show="tab === 'users'" x-cloak class="w-full p-6 bg-white rounded shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">User List</h1>
+<!--         <button class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" onclick="toggleItemModal(true)"> -->
+<!--             Add New User -->
+<!--         </button> -->
+    </div>
+
+    <div class="overflow-x-auto flex justify-center">
         <table class="w-full text-md text-gray-700">
             <thead class="bg-gray-100 text-md uppercase font-semibold">
                 <tr>
-                    <th class="px-6 py-3">Name</th>
-                    <th class="px-6 py-3">Email</th>
-                    <th class="px-6 py-3">Role</th>
+                    <th class="px-6 py-3 text-left">Name</th>
+                    <th class="px-6 py-3 text-center">Email</th>
+                    <th class="px-6 py-3 text-center">Role</th>
+                    <th class="px-6 py-3 text-center">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @foreach (var user in Model)
                 {
-                    <tr>
-                        <td class="px-6 py-4">@user.Name</td>
-                        <td class="px-6 py-4">@user.Email</td>
-                        <td class="px-6 py-4">@user.Role</td>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap text-left">@user.Name</td>
+                        <td class="px-6 py-4 text-center">@user.Email</td>
+                        <td class="px-6 py-4 text-center">@user.Role</td>
+                        <td class="flex px-6 py-4 justify-center space-x-4">
+                            <button type="button"
+                                    class="text-blue-600 hover:text-blue-800"
+                                    onclick='toggleItemModal(true, @Html.Raw(Json.Serialize(user)))'
+                                    title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <form asp-controller="Profile"
+                                  asp-action="DeleteItem"
+                                  method="post"
+                                  data-ajax="true"
+                                  data-ajax-method="POST"
+                                  data-ajax-complete="location.reload()"
+                                  class="inline">
+                                <input type="hidden" name="id" value="@user.Id" />
+                                <button type="submit"
+                                        class="text-red-600 hover:text-red-800"
+                                        title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 }
             </tbody>

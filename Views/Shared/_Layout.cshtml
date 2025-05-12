@@ -3,83 +3,182 @@
 
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - Project</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.17/dist/tailwind.min.css"
+            asp-append-version="true"
+        />
+        <link
+            rel="stylesheet"
+            href="~/css/site.css"
+            asp-append-version="true"
+        />
+        <link
+            rel="stylesheet"
+            href="~/css/output.css"
+            asp-append-version="true"
+        />
+        <script src="https://unpkg.com/alpinejs" defer></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        />
+    </head>
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Project</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.17/dist/tailwind.min.css"
-        asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
-    <script src="https://unpkg.com/alpinejs" defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
+    <body>
+        <header>
+            <nav class="bg-white shadow-sm border-b">
+                <div class="container mx-auto px-6 py-4">
+                    <div class="flex justify-between items-center">
+                        <!-- Logo -->
 
-<body>
-    <header>
-        <nav class="bg-white shadow-sm border-b">
-            <div class="container mx-auto px-6 py-4">
-                <div class="flex justify-between items-center">
-                    <!-- Logo -->
+                        <a
+                            class="text-2xl font-bold text-gray-800 hover:text-black transition"
+                            asp-controller="Home"
+                            asp-action="Index"
+                        >
+                            <i class="fas fa-microscope mr-2"></i>Lab Equipment
+                            Portal
+                        </a>
 
-                    <a class="text-2xl font-bold text-gray-800 hover:text-black transition" asp-controller="Home"
-                        asp-action="Index">
-                        <i class="fas fa-microscope mr-2"></i>Lab Equipment Portal
-                    </a>
-
-                    <!-- Navigation links -->
-                    <div class="flex space-x-6 text-base font-medium">
-                        <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Home"
-                            asp-action="Index">Home</a>
-                        @if (!User.Identity.IsAuthenticated)
-                        {
-                            <a class="text-gray-700 hover:text-black hover:font-semibold transition" asp-controller="Auth"
-                                asp-action="SignIn">Sign In</a>
-                            <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
-                                asp-controller="Auth" asp-action="SignUp">Sign Up</a>
-                        }
-                        else
-                        {
+                        <!-- Navigation links -->
+                        <div
+                            class="flex space-x-6 text-base font-medium items-center"
+                        >
+                            @if (!User.Identity.IsAuthenticated) {
+                            <a
+                                class="text-gray-700 hover:text-black hover:font-semibold transition"
+                                asp-controller="Auth"
+                                asp-action="SignIn"
+                                >Sign In</a
+                            >
+                            <a
+                                class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
+                                asp-controller="Auth"
+                                asp-action="SignUp"
+                                >Sign Up</a
+                            >
+                            } else {
                             <span class="text-gray-600 px-2">
                                 Welcome, <strong>@User.Identity.Name!</strong>
                             </span>
 
-                            @if (User.HasClaim(ClaimTypes.Role, UserType.Manager.ToString()))
-                            {
-                                <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
-                                    asp-controller="Manager" asp-action="BorrowRequest">Borrow Request</a>
-                                <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
-                                    asp-controller="Manager" asp-action="BorrowingItemList">Borrowing List</a>
+                            @if (User.HasClaim(ClaimTypes.Role,
+                            UserType.Manager.ToString())) {
+                            <!-- Dropdown for Manager -->
+                            <div class="relative" id="managerDropdownWrapper">
+                                <button
+                                    onclick="toggleDropdown('managerDropdown')"
+                                    class="text-gray-700 hover:text-black hover:font-semibold transition inline-flex items-center"
+                                >
+                                    Manager
+                                    <i
+                                        class="fas fa-chevron-down ml-1 text-sm"
+                                    ></i>
+                                </button>
+                                <div
+                                    id="managerDropdown"
+                                    class="absolute top-full left-0 mt-1 w-48 bg-white border rounded shadow-lg z-50 hidden"
+                                >
+                                    <a
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        asp-controller="Manager"
+                                        asp-action="BorrowRequest"
+                                        >Borrow Request</a
+                                    >
+                                    <a
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        asp-controller="Manager"
+                                        asp-action="BorrowingItemList"
+                                        >Borrowing List</a
+                                    >
+                                </div>
+                            </div>
                             }
-                            <a class="text-gray-700 hover:text-black hover:font-semibold transition ms-3"
-                                asp-controller="Profile" asp-action="Index">Profile</a>
 
-                            <form class="inline-block ms-3" asp-controller="Home" asp-action="Logout" method="post">
-                                <button type="submit"
-                                    class="text-gray-700 hover:text-black hover:font-semibold transition">Logout</button>
-                            </form>
-                        }
-
+                            <!-- Dropdown for Account -->
+                            <div
+                                class="relative ms-3"
+                                id="accountDropdownWrapper"
+                            >
+                                <button
+                                    onclick="toggleDropdown('accountDropdown')"
+                                    class="text-gray-700 hover:text-black hover:font-semibold transition inline-flex items-center"
+                                >
+                                    Account
+                                    <i
+                                        class="fas fa-chevron-down ml-1 text-sm"
+                                    ></i>
+                                </button>
+                                <div
+                                    id="accountDropdown"
+                                    class="absolute top-full left-0 mt-1 w-40 bg-white border rounded shadow-lg z-50 hidden"
+                                >
+                                    <a
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        asp-controller="Profile"
+                                        asp-action="Index"
+                                        >Profile</a
+                                    >
+                                    <form
+                                        asp-controller="Home"
+                                        asp-action="Logout"
+                                        method="post"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        >
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container mx-auto px-4">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+            </nav>
+        </header>
+        <div class="container mx-auto px-4">
+            <main role="main" class="pb-3">@RenderBody()</main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 
-    <!--     <footer class="border-t py-4 text-center text-gray-600"> -->
-    <!--         <div class="container mx-auto"> -->
-    <!--             &copy; 2025 - Project - <a asp-controller="Home" asp-action="Privacy" class="text-blue-500">Privacy</a> -->
-    <!--         </div> -->
-    <!--     </footer> -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+    <script>
+        // Toggle dropdown visibility
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const isHidden = dropdown.classList.contains('hidden');
 
+            // Hide all dropdowns first
+            document.querySelectorAll('.dropdown-menu').forEach(el => el.classList.add('hidden'));
+
+            // Toggle the clicked one
+            if (isHidden) dropdown.classList.remove('hidden');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function (event) {
+            const isClickInsideManager = document.getElementById('managerDropdownWrapper')?.contains(event.target);
+            const isClickInsideAccount = document.getElementById('accountDropdownWrapper')?.contains(event.target);
+
+            if (!isClickInsideManager && !isClickInsideAccount) {
+                document.getElementById('managerDropdown')?.classList.add('hidden');
+                document.getElementById('accountDropdown')?.classList.add('hidden');
+            }
+        });
+
+        // Optional: Add class to dropdown divs for easier selection
+        document.querySelectorAll('#managerDropdown, #accountDropdown').forEach(el => {
+            el.classList.add('dropdown-menu');
+        });
+    </script>
 </html>
