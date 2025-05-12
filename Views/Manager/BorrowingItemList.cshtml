@@ -5,50 +5,64 @@
     ViewData["Title"] = "Borrowing Item List Page";
 }
 
-<div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 py-10">
-    <p>Borrowing Item List:</p>
+<div class="w-full px-6 py-10">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Borrowing Item List</h2>
+
     @if (Model != null && Model.Any())
     {
-        foreach (var item in Model)
-        {
-            <div class="flex flex-row items-center justify-start mb-4 gap-4">
-                <div class="w-10 h-10">
-                    <img src="data:image/jpeg;base64,@item.Item.Image" alt="@item.Item.Name" class="rounded" />
-                </div>
-                <p class="text-gray-600">Item Name: <strong>@item.Item.Name</strong></p>
-                <p class="text-gray-600">Quantity: <strong>@item.Quantity</strong></p>
-                <p class="text-gray-600">Borrow Date: <strong>@item.RequestDate</strong></p>
-                <p class="text-gray-600">Due Date: <strong>@item.DueDate</strong></p>
-                <p class="text-gray-600">Return Date: <strong>@item.ReturnDate</strong></p>
-
-                <div class="flex justify-end gap-2">
-                    <form asp-controller="Manager" asp-action="ManageBorrowItem" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="itemId" value="@item.Id" />
-                        <div class="flex gap-2">
-                            @if (item.Status == ItemStatus.Borrowing)
-                            {
-                                <button type="submit" name="status" value="@ItemStatus.Returned.ToString()"
-                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                                    Return
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="submit" name="status" value="@ItemStatus.Borrowing.ToString()"
-                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                                    Borrowing
-                                </button>
-                            }
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        }
+        <div class="overflow-x-auto shadow border border-gray-300 rounded-lg">
+            <table class="min-w-full w-full table-auto text-center text-sm">
+                <thead class="bg-gray-100 text-gray-700 font-semibold">
+                    <tr>
+                        <th class="px-4 py-3 border-b">Image</th>
+                        <th class="px-4 py-3 border-b">Item Name</th>
+                        <th class="px-4 py-3 border-b">Quantity</th>
+                        <th class="px-4 py-3 border-b">Borrow Date</th>
+                        <th class="px-4 py-3 border-b">Due Date</th>
+                        <th class="px-4 py-3 border-b">Return Date</th>
+                        <th class="px-4 py-3 border-b">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-800">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover:bg-gray-50 border-t">
+                            <td class="flex px-4 py-3 justify-center">
+                                <img src="data:image/jpeg;base64,@item.Item.Image" alt="@item.Item.Name" class="h-4 w-4 object-cover rounded" />
+                            </td>
+                            <td class="px-4 py-3">@item.Item.Name</td>
+                            <td class="px-4 py-3">@item.Quantity</td>
+                            <td class="px-4 py-3">@item.RequestDate.ToString("yyyy-MM-dd")</td>
+                            <td class="px-4 py-3">@item.DueDate?.ToString("yyyy-MM-dd")</td>
+                            <td class="px-4 py-3">@item.ReturnDate?.ToString("yyyy-MM-dd")</td>
+                            <td class="px-4 py-3">
+                                <form asp-controller="Manager" asp-action="ManageBorrowItem" method="post" class="inline-block">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="itemId" value="@item.Id" />
+                                    @if (item.Status == ItemStatus.Borrowing)
+                                    {
+                                        <button type="submit" name="status" value="@ItemStatus.Returned.ToString()"
+                                                class="px-3 py-1 text-sm text-green-600 border border-green-600 rounded hover:bg-green-100">
+                                            Return
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" name="status" value="@ItemStatus.Borrowing.ToString()"
+                                                class="px-3 py-1 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-100">
+                                            Borrowing
+                                        </button>
+                                    }
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
-        <p class="text-gray-500">No borrowing item available.</p>
+        <p class="text-gray-600 mt-6">No borrowing items available.</p>
     }
 </div>
