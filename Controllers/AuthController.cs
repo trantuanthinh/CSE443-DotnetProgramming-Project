@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text.Json;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,22 +11,19 @@ using Project.Core.Extensions;
 using Project.DTO;
 using Project.Interfaces;
 using Project.Models;
+using Project.OTPServices;
 using Project.Utils;
 
-public class AuthController : BaseController
+public class AuthController(
+    IAuthService authService,
+    DataContext dataContext,
+    OtpService otpService,
+    IMapper mapper,
+    ILogger<AuthController> logger
+) : BaseController(dataContext, mapper, logger)
 {
-    private readonly IAuthService _authService;
-
-    public AuthController(
-        IAuthService authService,
-        DataContext dataContext,
-        IMapper mapper,
-        ILogger<AuthController> logger
-    )
-        : base(dataContext, mapper, logger)
-    {
-        _authService = authService;
-    }
+    private readonly IAuthService _authService = authService;
+    private readonly OtpService _otpService = otpService;
 
     public ActionResult SignIn()
     {
@@ -35,6 +33,81 @@ public class AuthController : BaseController
     public ActionResult SignUp()
     {
         return View();
+    }
+
+    public ActionResult ForgotPass()
+    {
+        ViewBag.Step = 1;
+        return View();
+    }
+
+    //Step 1
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendOtp(string email)
+    {
+        if (!await _authService.CheckExistEmail(email))
+        {
+            ModelState.AddModelError("", "Email does not exist.");
+            return View("ForgotPassword");
+        }
+
+        if (!await _otpService.SendOTP(email))
+        {
+            ModelState.AddModelError("", "Failed to send OTP.");
+            return View("ForgotPassword");
+        }
+
+        ViewBag.Step = 2;
+        ViewBag.Email = email;
+        return View("ForgotPass");
+    }
+
+    //Step 2
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> VerifyOtp(string email, string otp)
+    {
+        if (await _otpService.VerifyOTP(email, otp))
+        {
+            ViewBag.Step = 3;
+            ViewBag.Email = email;
+            return View("ForgotPass");
+        }
+
+        ModelState.AddModelError("", "OTP is not correct.");
+        ViewBag.Step = 2;
+        ViewBag.Email = email;
+        return View("ForgotPass");
+    }
+
+    // Step 3
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(
+        string email,
+        string password,
+        string confirmPassword
+    )
+    {
+        if (password != confirmPassword)
+        {
+            ModelState.AddModelError("", "Input password does not match.");
+            ViewBag.Step = 3;
+            ViewBag.Email = email;
+            return View("ForgotPass");
+        }
+
+        if (!await _authService.ChangePassword(email, password))
+        {
+            ModelState.AddModelError("", "Failed to change password.");
+            ViewBag.Step = 3;
+            ViewBag.Email = email;
+            return View("ForgotPass");
+        }
+
+        TempData["Success"] = "Change Password Success!";
+        return RedirectToAction("SignIn");
     }
 
     [HttpPost]

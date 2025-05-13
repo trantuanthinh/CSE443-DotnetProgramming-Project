@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Forgot Password";
+    var step = ViewBag.Step ?? 1;
+}
+
+<h2 class="mb-4">Forgot Password - Step: @step</h2>
+
+@if (step == 1)
+{
+    <!-- Bước 1: Nhập email -->
+    <form asp-controller="Auth" asp-action="SendOtp" method="post">
+        <label for="email">Your Email:</label>
+        <input id="email" type="email" name="email" class="form-control" required />
+        <button type="submit" class="btn btn-primary mt-2">Send OTP</button>
+    </form>
+}
+else if (step == 2)
+{
+    <!-- Bước 2: Nhập OTP -->
+    <form asp-controller="Auth" asp-action="VerifyOtp" method="post">
+        <input type="hidden" name="email" value="@ViewBag.Email" />
+        <div class="form-group">
+            <label for="otp">Input OTP:</label>
+            <input type="text" name="otp" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success mt-2">Verify OTP</button>
+    </form>
+}
+else if (step == 3)
+{
+    <!-- Bước 3: Nhập mật khẩu mới -->
+    <form asp-controller="Auth" asp-action="ResetPassword" method="post">
+        <input type="hidden" name="email" value="@ViewBag.Email" />
+        <div class="form-group">
+            <label for="password">New Password:</label>
+            <input type="password" name="password" class="form-control" required />
+        </div>
+        <div class="form-group mt-2">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" name="confirmPassword" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-warning mt-3">Reset Password</button>
+    </form>
+}

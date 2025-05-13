@@ -1,7 +1,5 @@
 ﻿@{
     ViewData["Title"] = "Sign In";
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="..."
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
 }
 
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -40,7 +38,8 @@
 
             <div class="flex items-center justify-between">
                 <div class="text-sm">
-                    <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    <a asp-controller="Auth" asp-action="ForgotPass"
+                        class="font-medium text-indigo-600 hover:text-indigo-500">
                         Forgot your password?
                     </a>
                 </div>

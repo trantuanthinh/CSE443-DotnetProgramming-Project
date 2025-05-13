@@ -11,5 +11,7 @@ namespace Project.Interfaces
         Task<string> GetUserInfoAsync(string accessToken);
         Task<User> GoogleAuthenticatedUser(string email);
         Task<bool> CreateGoogleUser(User _item);
+        Task<bool> CheckExistEmail(string email);
+        Task<bool> ChangePassword(string email, string newPassword);
     }
 }

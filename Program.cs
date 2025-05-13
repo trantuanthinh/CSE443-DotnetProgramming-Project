@@ -7,6 +7,7 @@ using Project.AutoMapperHelper;
 using Project.Core;
 using Project.Interfaces;
 using Project.MailServices;
+using Project.OTPServices;
 using Project.Repositories;
 using Project.Services;
 using Project.Utils;
@@ -52,6 +53,7 @@ builder.Services.AddScoped<BaseController>();
 builder.Services.AddScoped<MappingHelper>();
 builder.Services.AddSingleton<MailService>();
 builder.Services.AddSingleton<SharedService>();
+builder.Services.AddSingleton<OtpService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();

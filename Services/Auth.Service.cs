@@ -90,5 +90,23 @@ namespace Project.Services
             _repository.Add(_item);
             return _repository.Save();
         }
+
+        public async Task<bool> CheckExistEmail(string email)
+        {
+            return await _repository.SelectAll().AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> ChangePassword(string email, string password)
+        {
+            var user = await _repository.SelectAll().FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(password);
+            _repository.Update(user);
+            return await _repository.SaveAsync();
+        }
     }
 }
