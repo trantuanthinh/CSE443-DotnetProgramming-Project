@@ -28,34 +28,15 @@ namespace Project
             )>
             {
                 (
-                    "nguyenxuancuong",
-                    "Nguyen Xuan Cuong",
+                    "thaohoang",
+                    "Thao Hoang",
                     "conan246817@gmail.com",
                     "123456789",
                     UserType.Lecturer
                 ),
-                (
-                    "tranvantai",
-                    "Tran Van Tai",
-                    "tranvantai@gmail.com",
-                    "987654321",
-                    UserType.Lecturer
-                ),
-                (
-                    "ngoctram",
-                    "Ngoc Tram",
-                    "tram@gmail.com",
-                    "987654321",
-                    UserType.Manager
-                ),
-                (
-                    "nguyenvana",
-                    "Nguyen Van A",
-                    "nguyenvana@gmail.com",
-                    "123789456",
-                    UserType.Manager
-                ),
-                ("tranthib", "Tran Thi B", "tranthib@gmail.com", "987321654", UserType.Manager),
+                ("thanhmai", "Thanh Mai", "tranvantai@gmail.com", "987654321", UserType.Manager),
+                ("ngoctram", "Ngoc Tram", "tram@gmail.com", "987654321", UserType.Manager),
+                ("admin", "Admin", "tran.tuan.thinh.0125@gmail.com", "123789456", UserType.Manager),
             };
 
             var userList = users
