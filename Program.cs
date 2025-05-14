@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Project;
 using Project.AppContext;
 using Project.AutoJobs;
 using Project.AutoMapperHelper;
 using Project.Core;
+using Project.Hubs;
 using Project.Interfaces;
 using Project.MailServices;
 using Project.OTPServices;
@@ -21,10 +23,15 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "CorsPolicy",
+        builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+    );
+});
 builder.Services.AddSession();
 builder.Services.AddSignalR();
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddQuartz(store =>
 {
@@ -54,6 +61,7 @@ builder.Services.AddScoped<MappingHelper>();
 builder.Services.AddSingleton<MailService>();
 builder.Services.AddSingleton<SharedService>();
 builder.Services.AddSingleton<OtpService>();
+builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -88,7 +96,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -96,9 +104,17 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    // SignalR Hub
+    _ = endpoints.MapHub<ChatHub>("/chathub").RequireAuthorization();
 
-app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
-
+    // MVC Controllers
+    _ = endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
+});
 if (args.Contains("seeddata"))
 {
     using (var scope = app.Services.CreateScope())

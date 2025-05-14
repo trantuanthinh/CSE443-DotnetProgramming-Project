@@ -5,10 +5,8 @@ using Project.Utils;
 
 namespace Project.AppContext
 {
-    public class DataContext : DbContext
+    public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-
         // Converters
         private readonly EnumToStringConverter<UserType> UserTypeConverter = new();
         private readonly EnumToStringConverter<LoginType> LoginTypeConverter = new();

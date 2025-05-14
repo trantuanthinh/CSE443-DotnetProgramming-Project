@@ -1,18 +1,16 @@
-using System.Security.Claims;
-using System.Text.Json;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Project.AppContext;
 using Project.Core;
-using Project.Core.Extensions;
 using Project.DTO;
 using Project.Interfaces;
 using Project.Models;
 using Project.OTPServices;
 using Project.Utils;
+using System.Security.Claims;
+using System.Text.Json;
 
 public class AuthController(
     IAuthService authService,
@@ -114,14 +112,20 @@ public class AuthController(
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> SignIn(IFormCollection form)
     {
-        string email = form["email"];
+        string username = form["username"];
         string password = form["password"];
-        User user = await _authService.SignIn(email, password);
+        User user = await _authService.SignIn(username, password);
+
+        if (user == null)
+        {
+            return View("SignIn");
+        }
+
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.Name),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            new(ClaimTypes.Name, user.Name),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Role, user.Role.ToString()),
         };
 
         var identity = new ClaimsIdentity(
@@ -130,7 +134,6 @@ public class AuthController(
         );
         var principal = new ClaimsPrincipal(identity);
 
-        // Lưu cookie đăng nhập
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         return RedirectToAction("Index", "Home");

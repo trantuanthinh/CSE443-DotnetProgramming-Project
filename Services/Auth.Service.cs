@@ -4,13 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using Project.Interfaces;
 using Project.Models;
 using Project.Repositories;
+using Project.Utils;
 
 namespace Project.Services
 {
-    public class AuthService(UserRepository repository, IConfiguration configuration) : IAuthService
+    public class AuthService(
+        UserRepository repository,
+        IConfiguration configuration,
+        SharedService sharedService
+    ) : IAuthService
     {
         private readonly UserRepository _repository = repository;
         private readonly IConfiguration _configuration = configuration;
+        private readonly SharedService _sharedService = sharedService;
         private readonly string TokenEndpoint = "https://oauth2.googleapis.com/token";
         private readonly string UserInfoEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
         private readonly string AccountEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -24,14 +30,15 @@ namespace Project.Services
             return await _repository.SaveAsync();
         }
 
-        public async Task<User> SignIn(string email, string password)
+        public async Task<User> SignIn(string username, string password)
         {
-            var user = await _repository.SelectAll().FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+            User _user = await GetUserByUsernameType(username);
+
+            if (_user == null || !BCrypt.Net.BCrypt.Verify(password, _user.Password))
             {
                 return null;
             }
-            return user;
+            return _user;
         }
 
         public string GetGoogleUrl()
@@ -107,6 +114,51 @@ namespace Project.Services
             user.Password = BCrypt.Net.BCrypt.HashPassword(password);
             _repository.Update(user);
             return await _repository.SaveAsync();
+        }
+
+        private async Task<User> GetUserByUsernameType(string username)
+        {
+            var usernameType = ChooseUsernameType(username);
+
+            return usernameType switch
+            {
+                UsernameType.Email => await GetUserByEmail(username),
+                UsernameType.UserName => await GetUserByUserName(username),
+                _ => throw new ArgumentException("Invalid username type"),
+            };
+        }
+
+        private async Task<User> GetUserByEmail(string email)
+        {
+            User _user = await _repository
+                .SelectAll()
+                .Where(item => item.Email == email)
+                .FirstOrDefaultAsync();
+            return _user;
+        }
+
+        private async Task<User> GetUserByUserName(string username)
+        {
+            User _user = await _repository
+                .SelectAll()
+                .Where(item => item.Username == username)
+                .FirstOrDefaultAsync();
+            return _user;
+        }
+
+        private UsernameType ChooseUsernameType(string username)
+        {
+            if (_sharedService.IsValidGmail(username))
+            {
+                return UsernameType.Email;
+            }
+
+            if (_sharedService.IsNumber(username))
+            {
+                return UsernameType.PhoneNumber;
+            }
+
+            return UsernameType.UserName;
         }
     }
 }

@@ -18,5 +18,19 @@ namespace Project.Utils
             // Convert byte array to Base64 string
             return Convert.ToBase64String(bytes);
         }
+
+        public bool IsValidGmail(string email)
+        {
+            Regex GmailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@gmail\.com$", RegexOptions.Compiled);
+            if (string.IsNullOrEmpty(email))
+                return false;
+
+            return GmailRegex.IsMatch(email);
+        }
+
+        public bool IsNumber(string input)
+        {
+            return double.TryParse(input, out _);
+        }
     }
 }

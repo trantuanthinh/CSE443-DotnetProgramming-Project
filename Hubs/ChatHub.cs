@@ -1,11 +1,14 @@
 using System.Collections.Concurrent;
 using System.Security.Claims;
 using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Project.AppContext;
 using Project.DTO;
 using Project.Interfaces;
 using Project.Models;
+using Project.Utils;
 
 namespace Project.Hubs
 {
@@ -13,24 +16,23 @@ namespace Project.Hubs
     public class ChatHub(
         IMapper mapper,
         IConversationService conversationService,
-        IMessageService messageService
+        IMessageService messageService,
+        DataContext context
     ) : Hub
     {
-        // ConcurrentDictionary for thread-safe operations
-        private static readonly ConcurrentDictionary<string, string> ConnectedUsers =
-            new ConcurrentDictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> ConnectedUsers = new();
 
         private readonly IMapper _mapper = mapper;
+        private readonly DataContext _context = context;
         private readonly IConversationService _conversationService = conversationService;
         private readonly IMessageService _messageService = messageService;
 
         public override async Task OnConnectedAsync()
         {
             var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             if (!string.IsNullOrEmpty(userId))
             {
-                ConnectedUsers[userId] = Context.ConnectionId; // Map userId to connectionId
+                ConnectedUsers[userId] = Context.ConnectionId;
                 Console.WriteLine($"User {userId} connected. ConnectionId: {Context.ConnectionId}");
             }
 
@@ -40,103 +42,106 @@ namespace Project.Hubs
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             if (!string.IsNullOrEmpty(userId))
             {
-                ConnectedUsers.TryRemove(userId, out _); // Remove user from ConnectedUsers
+                ConnectedUsers.TryRemove(userId, out _);
                 Console.WriteLine($"User {userId} disconnected.");
             }
 
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendPrivateMessage(string recipientId, MessageRequest item)
+        public async Task SendPrivateMessage(MessageRequest request)
         {
             var senderId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var senderRole = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
+            Console.WriteLine(senderId);
 
             if (string.IsNullOrEmpty(senderId))
-            {
-                throw new HubException("Unauthorized user.");
-            }
+                throw new HubException("Unauthorized");
 
-            // Find or create the conversation
-            Conversation conversation = await _conversationService.FindOrCreateConversation(
-                Guid.Parse(senderId),
-                Guid.Parse(recipientId)
-            );
-            Message _item = _mapper.Map<Message>(item);
-            _item.ConversationId = conversation.Id;
+            var message = _mapper.Map<Message>(request);
+            message.SenderId = Guid.Parse(senderId);
+            // var isCreated = await _messageService.CreateMessage(message);
 
-            // Check if the recipient is connected
-            if (ConnectedUsers.TryGetValue(recipientId, out var recipientConnectionId))
+            if (senderRole != null && senderRole.Contains("Lecturer"))
             {
-                // Send the message to the recipient
-                if (_item.Content != null)
+                var managerIds = _context
+                    .Users.Where(u => u.Role.Equals(UserType.Manager))
+                    .Select(u => u.Id.ToString())
+                    .ToList();
+
+                foreach (var managerId in managerIds)
                 {
-                    await SendTextMessageToRecipient(
-                        recipientConnectionId,
-                        senderId,
-                        _item.Content
+                    var conversation = await _conversationService.FindOrCreateConversation(
+                        Guid.Parse(senderId),
+                        Guid.Parse(managerId)
                     );
+
+                    var msg = new Message
+                    {
+                        Id = Guid.NewGuid(),
+                        Content = message.Content,
+                        SenderId = message.SenderId,
+                        ConversationId = conversation.Id,
+                        Timestamp = message.Timestamp,
+                    };
+
+                    message.Id = Guid.NewGuid();
+                    var success = await _messageService.CreateMessage(msg);
+                    if (success)
+                    {
+                        await Clients
+                            .User(managerId)
+                            .SendAsync("ReceivePrivateMessage", senderId, request.Content);
+                    }
                 }
 
-                async Task SendTextMessageToRecipient(
-                    string recipientConnectionId,
-                    string senderId,
-                    string content
-                )
-                {
-                    await Clients
-                        .Client(recipientConnectionId)
-                        .SendAsync("ReceivePrivateMessage", senderId, content);
-                }
-
-                // Notify the sender of successful delivery
+                // Gửi lại cho chính người gửi để hiển thị
                 await Clients
-                    .Client(Context.ConnectionId)
-                    .SendAsync("SendPrivateMessageStatus", "Message sent.");
-
-                // Save the message to the conversation
-                await _messageService.CreateMessage(_item);
+                    .User(senderId)
+                    .SendAsync("ReceivePrivateMessage", senderId, request.Content);
             }
             else
             {
-                // Notify the sender if the recipient is not available
-                await Clients
-                    .Client(Context.ConnectionId)
-                    .SendAsync("SendPrivateMessageStatus", "User not available.");
+                // Gửi tin nhắn tới một người cụ thể (RecipientId)
+                var recipientId = request.RecipientId.ToString();
 
-                // Save the message to the conversation for later delivery
-                await _messageService.CreateMessage(_item);
-            }
-        }
-
-        public async Task SendMessage(string user, string message)
-        {
-            Console.WriteLine($"Received message from {user}: {message}");
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
-        }
-
-        public async Task GetChatHistory(string senderId, string recipientId)
-        {
-            if (string.IsNullOrEmpty(senderId) || string.IsNullOrEmpty(recipientId))
-            {
-                throw new HubException("Invalid sender or recipient.");
-            }
-
-            try
-            {
-                List<MessageResponse> messages = await _conversationService.GetMessagesByUserId(
+                var conversation = await _conversationService.FindOrCreateConversation(
                     Guid.Parse(senderId),
                     Guid.Parse(recipientId)
                 );
-                await Clients.Caller.SendAsync("LoadChatHistory", messages);
+
+                message.ConversationId = conversation.Id;
+                message.Timestamp = DateTime.UtcNow;
+
+                message.Id = Guid.NewGuid();
+                var success = await _messageService.CreateMessage(message);
+                if (!success)
+                    throw new HubException("Failed to save message");
+
+                await Clients
+                    .User(recipientId)
+                    .SendAsync("ReceivePrivateMessage", senderId, request.Content);
+
+                await Clients
+                    .User(senderId)
+                    .SendAsync("ReceivePrivateMessage", senderId, request.Content);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error fetching chat history: {ex.Message}");
-                await Clients.Caller.SendAsync("LoadChatHistory", Array.Empty<string>());
-            }
+        }
+
+        public async Task GetChatHistory(string withUserId)
+        {
+            var currentUserId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || string.IsNullOrEmpty(withUserId))
+                throw new HubException("Invalid users");
+
+            var history = await _conversationService.GetMessagesByUserId(
+                Guid.Parse(currentUserId),
+                Guid.Parse(withUserId)
+            );
+
+            await Clients.Caller.SendAsync("LoadChatHistory", history);
         }
     }
 }

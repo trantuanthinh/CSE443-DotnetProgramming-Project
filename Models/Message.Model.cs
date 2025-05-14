@@ -1,5 +1,5 @@
-using Project.Core.Base.Enity;
 using System.ComponentModel.DataAnnotations;
+using Project.Core.Base.Enity;
 
 namespace Project.Models
 {

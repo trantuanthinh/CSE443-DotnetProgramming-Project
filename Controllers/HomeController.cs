@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +5,8 @@ using Project.Core;
 using Project.Interfaces;
 using Project.Models;
 using Project.Utils;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Project.Controllers
 {

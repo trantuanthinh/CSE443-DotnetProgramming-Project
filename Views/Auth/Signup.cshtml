@@ -1,68 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Sign Up";
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 }
-
-@* <div class="min-h-screen flex items-center justify-center bg-gray-100"> *@
-@*     <div class="bg-white p-8 rounded shadow-md w-full max-w-md"> *@
-@*         <h2 class="text-2xl font-bold mb-6 text-center">Create an account</h2> *@
-@*         <form asp-controller="Auth" asp-action="SignUp" method="post" class="space-y-4"> *@
-@*             <div> *@
-@*                 <label for="fullName" class="block text-sm font-medium text-gray-700">Name</label> *@
-@*                 <input type="text" value="Tran Tuan Thinh" id="name" name="Name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm *@
-@*                               focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" /> *@
-@*             </div> *@
-@*             <div> *@
-@*                 <label for="email" class="block text-sm font-medium text-gray-700">Email address</label> *@
-@*                 <input type="email" value="tran.tuan.thinh.0125@gmail.com" id="email" name="Email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm *@
-@*                               focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" /> *@
-@*             </div> *@
-@*             <div> *@
-@*                 <label for="password" class="block text-sm font-medium text-gray-700">Password</label> *@
-@*                 <input type="password" value="quametmoi" id="password" name="Password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm *@
-@*                               focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" /> *@
-@*             </div> *@
-@*             <div> *@
-@*                 <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label> *@
-@*                 <input type="password" value="quametmoi" id="confirmPassword" name="ConfirmPassword" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm *@
-@*                               focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" /> *@
-@*             </div> *@
-@*             <div> *@
-@*                 <label for="role" class="block text-sm font-medium text-gray-700">Vai trò</label> *@
-@*                 <select id="role" name="Role" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm *@
-@*                                focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"> *@
-@*                     <option value="" disabled selected>-- Chọn vai trò --</option> *@
-@*                     <option value="manager">Manager</option> *@
-@*                     <option value="lecturer">Lecturer</option> *@
-@*                 </select> *@
-@*             </div> *@
-
-@*             <div> *@
-@*                 <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm *@
-@*                                text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 *@
-@*                                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"> *@
-@*                     Sign Up *@
-@*                 </button> *@
-@*             </div> *@
-@*             <p class="mt-2 text-center text-sm text-gray-600"> *@
-@*                 Already have an account? *@
-@*                 <a class="font-medium text-indigo-600 hover:text-indigo-500" asp-controller="Auth" *@
-@*                     asp-action="SignIn">Sign In</a> *@
-@*             </p> *@
-@*         </form> *@
-
-@*         <form asp-controller="Auth" asp-action="ContinueWithGoogle" method="post" id="googleForm"> *@
-@*             @Html.AntiForgeryToken() *@
-@*             <div> *@
-@*                 <button type="submit" *@
-@*                     class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"> *@
-@*                     Continue with Google *@
-@*                 </button> *@
-@*             </div> *@
-@*         </form> *@
-@*     </div> *@
-@* </div> *@
 
 <div class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
     <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
@@ -80,48 +18,48 @@
                 <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
                 <div class="mt-1">
                     <input type="text" value="Tran Tuan Thinh" id="name" name="Name" required
-                           class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
-                           placeholder="Your full name">
+                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                        placeholder="Your full name">
                 </div>
             </div>
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
                 <div class="mt-1">
                     <input type="email" value="tran.tuan.thinh.0125@gmail.com" id="email" name="Email" required
-                           class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
-                           placeholder="you@example.com">
+                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                        placeholder="you@example.com">
                 </div>
             </div>
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                 <div class="mt-1">
                     <input type="password" value="quametmoi" id="password" name="Password" required
-                           class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
-                           placeholder="••••••••">
+                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                        placeholder="••••••••">
                 </div>
             </div>
             <div>
                 <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
                 <div class="mt-1">
                     <input type="password" value="quametmoi" id="confirmPassword" name="ConfirmPassword" required
-                           class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
-                           placeholder="••••••••">
+                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                        placeholder="••••••••">
                 </div>
             </div>
-<!--             <div> -->
-<!--                 <label for="role" class="block text-sm font-medium text-gray-700">Role</label> -->
-<!--                 <div class="mt-1"> -->
-<!--                     <select id="role" name="Role" required -->
-<!--                             class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"> -->
-<!--                         <option value="" disabled selected>-- Select Role --</option> -->
-<!--                         <option value="manager">Manager</option> -->
-<!--                         <option value="lecturer">Lecturer</option> -->
-<!--                     </select> -->
-<!--                 </div> -->
-<!--             </div> -->
+            <!--             <div> -->
+            <!--                 <label for="role" class="block text-sm font-medium text-gray-700">Role</label> -->
+            <!--                 <div class="mt-1"> -->
+            <!--                     <select id="role" name="Role" required -->
+            <!--                             class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"> -->
+            <!--                         <option value="" disabled selected>-- Select Role --</option> -->
+            <!--                         <option value="manager">Manager</option> -->
+            <!--                         <option value="lecturer">Lecturer</option> -->
+            <!--                     </select> -->
+            <!--                 </div> -->
+            <!--             </div> -->
             <div>
                 <button type="submit"
-                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Sign Up
                 </button>
             </div>
@@ -144,7 +82,7 @@
                     @Html.AntiForgeryToken()
                     <div>
                         <button type="submit"
-                                class="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <i class="fa-brands fa-google mr-2 text-gray-500"></i> Continue with Google
                         </button>
                     </div>

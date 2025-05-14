@@ -11,6 +11,7 @@ namespace Project.AutoMapperHelper
             // ----- CreateMap<A,B> => Map from A to B
 
             CreateMap<GoogleRequest, User>();
+            CreateMap<MessageRequest, Message>();
         }
     }
 }

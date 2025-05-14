@@ -2,8 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Project.AppContext;
-using Project.Core.Extensions;
-using Project.Models;
 
 namespace Project.Core
 {
