@@ -63,12 +63,23 @@ namespace Project.Services
         #endregion
 
         #region Message
-        Task<List<MessageResponse>> IConversationService.GetMessagesByUserId(
-            Guid senderId,
-            Guid recipientId
-        )
+        public async Task<List<Message>> GetMessagesByUserId(Guid senderId, Guid recipientId)
         {
-            throw new NotImplementedException();
+            Conversation _item = await GetConversationByUserId(senderId, recipientId);
+            if (_item == null)
+            {
+                return [];
+            }
+            return await GetMessagesByConversationId(_item.Id);
+        }
+
+        private async Task<List<Message>> GetMessagesByConversationId(Guid id)
+        {
+            List<Message> _items = await _messageRepository
+                .SelectAll()
+                .Where(message => message.ConversationId == id)
+                .ToListAsync();
+            return _items;
         }
         #endregion
     }

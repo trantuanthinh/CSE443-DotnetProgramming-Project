@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -5,23 +7,29 @@ using Project.Core;
 using Project.Interfaces;
 using Project.Models;
 using Project.Utils;
-using System.Diagnostics;
-using System.Security.Claims;
 
 namespace Project.Controllers
 {
     public class HomeController(
         ILogger<HomeController> logger,
         IItemService itemService,
+        IUserService userService,
         IBorrowTransactionService borrowTransactionService
     ) : BaseController(logger: logger)
     {
+        private readonly IUserService _userService = userService;
         private readonly IItemService _itemService = itemService;
         private readonly IBorrowTransactionService _borrowTransactionService =
             borrowTransactionService;
 
         public async Task<IActionResult> Index()
         {
+            ViewData["UserConversations"] = await _userService.GetManagers();
+            if (User.HasClaim(ClaimTypes.Role, UserType.Manager.ToString()))
+            {
+                ViewData["UserConversations"] = await _userService.GetLecturers();
+            }
+
             var items = await _itemService.GetItems();
             return View(items);
         }

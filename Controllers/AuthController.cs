@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using System.Text.Json;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -9,8 +11,6 @@ using Project.Interfaces;
 using Project.Models;
 using Project.OTPServices;
 using Project.Utils;
-using System.Security.Claims;
-using System.Text.Json;
 
 public class AuthController(
     IAuthService authService,

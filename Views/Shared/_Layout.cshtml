@@ -25,6 +25,27 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const isHidden = dropdown.classList.contains('hidden');
+            document.querySelectorAll('.dropdown-menu').forEach(el => el.classList.add('hidden'));
+            if (isHidden) dropdown.classList.remove('hidden');
+        }
+
+        document.addEventListener('click', function (event) {
+            const isClickInsideManager = document.getElementById('managerDropdownWrapper')?.contains(event.target);
+            const isClickInsideAccount = document.getElementById('accountDropdownWrapper')?.contains(event.target);
+            if (!isClickInsideManager && !isClickInsideAccount) {
+                document.getElementById('managerDropdown')?.classList.add('hidden');
+                document.getElementById('accountDropdown')?.classList.add('hidden');
+            }
+        });
+
+        document.querySelectorAll('#managerDropdown, #accountDropdown').forEach(el => {
+            el.classList.add('dropdown-menu');
+        });
+    </script>
 </head>
 
 <body class="bg-white text-gray-800">
@@ -90,29 +111,7 @@
         <main role="main" class="pb-3"> @RenderBody() </main>
     </div>
     <partial name="_ChatBox.cshtml"></partial>
-
-    @section Scripts {
-        <script>
-            function toggleDropdown(id) {
-                const dropdown = document.getElementById(id);
-                const isHidden = dropdown.classList.contains('hidden');
-                document.querySelectorAll('.dropdown-menu').forEach(el => el.classList.add('hidden'));
-                if (isHidden) dropdown.classList.remove('hidden');
-            }
-
-            document.addEventListener('click', function (event) {
-                const isClickInsideManager = document.getElementById('managerDropdownWrapper')?.contains(event.target);
-                const isClickInsideAccount = document.getElementById('accountDropdownWrapper')?.contains(event.target);
-                if (!isClickInsideManager && !isClickInsideAccount) {
-                    document.getElementById('managerDropdown')?.classList.add('hidden');
-                    document.getElementById('accountDropdown')?.classList.add('hidden');
-                }
-            });
-            document.querySelectorAll('#managerDropdown, #accountDropdown').forEach(el => {
-                el.classList.add('dropdown-menu');
-            });
-        </script>
-    }
+    @RenderSection("Scripts", required: false)
 </body>
 
 </html>

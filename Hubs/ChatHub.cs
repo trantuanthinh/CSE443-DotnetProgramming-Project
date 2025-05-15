@@ -54,17 +54,14 @@ namespace Project.Hubs
         public async Task SendPrivateMessage(MessageRequest request)
         {
             var senderId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var senderRole = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
-            Console.WriteLine(senderId);
 
             if (string.IsNullOrEmpty(senderId))
                 throw new HubException("Unauthorized");
 
             var message = _mapper.Map<Message>(request);
             message.SenderId = Guid.Parse(senderId);
-            // var isCreated = await _messageService.CreateMessage(message);
 
-            if (senderRole != null && senderRole.Contains("Lecturer"))
+            if (request.RecipientId == null)
             {
                 var managerIds = _context
                     .Users.Where(u => u.Role.Equals(UserType.Manager))
@@ -136,10 +133,11 @@ namespace Project.Hubs
             if (string.IsNullOrEmpty(currentUserId) || string.IsNullOrEmpty(withUserId))
                 throw new HubException("Invalid users");
 
-            var history = await _conversationService.GetMessagesByUserId(
+            List<Message> history = await _conversationService.GetMessagesByUserId(
                 Guid.Parse(currentUserId),
                 Guid.Parse(withUserId)
             );
+            Console.WriteLine($"History: {history.Count}");
 
             await Clients.Caller.SendAsync("LoadChatHistory", history);
         }

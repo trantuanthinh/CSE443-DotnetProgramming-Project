@@ -9,6 +9,6 @@ namespace Project.Interfaces
         Task<Conversation> GetConversation(Guid id);
 
         Task<Conversation> FindOrCreateConversation(Guid senderId, Guid recipientId);
-        Task<List<MessageResponse>> GetMessagesByUserId(Guid senderId, Guid recipientId);
+        Task<List<Message>> GetMessagesByUserId(Guid senderId, Guid recipientId);
     }
 }

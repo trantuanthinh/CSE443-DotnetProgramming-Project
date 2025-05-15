@@ -18,6 +18,14 @@ namespace Project.Services
                 .ToListAsync();
         }
 
+        public async Task<ICollection<User>> GetManagers()
+        {
+            return await _repository
+                .SelectAll()
+                .Where(item => item.Role == UserType.Manager)
+                .ToListAsync();
+        }
+
         public async Task<User> GetUser(Guid id)
         {
             return await _repository.SelectAll().Where(item => item.Id == id).FirstOrDefaultAsync();
