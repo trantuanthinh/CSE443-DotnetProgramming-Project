@@ -1,0 +1,103 @@
+@using System.Security.Claims;
+@using Project.Utils;
+
+@{
+    var isAuthenticated = User.Identity.IsAuthenticated;
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var userRole = User.FindFirstValue(ClaimTypes.Role);
+}
+
+<!-- Chat Widget -->
+@if (isAuthenticated)
+{
+    <div id="chatToggle" onclick="toggleChat()" class="fixed bottom-5 right-5 bg-black text-white text-xl w-12 h-12 rounded-full flex items-center justify-center shadow-lg cursor-pointer z-50">
+        <i class="fas fa-comments"></i>
+    </div>
+    <div id="chatBox" class="fixed bottom-20 right-5 w-80 bg-white border border-gray-300 rounded-lg shadow-lg z-50 hidden">
+        <div class="bg-black text-white px-4 py-2 flex justify-between items-center rounded-t-lg">
+            <span class="font-semibold">Chat Support</span>
+            <button onclick="toggleChat()" class="text-white text-lg hover:text-gray-300">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="chatMessages" class="p-4 h-64 overflow-y-auto text-sm bg-gray-50">
+            <p class="text-gray-600">Welcome! How can we assist you today?</p>
+        </div>
+        <div class="flex border-t border-gray-300">
+            <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 px-3 py-2 text-sm border-none focus:outline-none" />
+            <button onclick="sendPrivateMessage()" class="bg-black text-white px-4">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+}
+
+@await RenderSectionAsync("Scripts", required: false)
+<script>
+    const currentUser = {
+        isAuthenticated: @Json.Serialize(User.Identity?.IsAuthenticated),
+        userId: @Json.Serialize(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+        isManager: @Json.Serialize(userRole?.Equals(UserType.Manager.ToString())),
+    };
+
+    // Chat logic
+    let connection = null;
+
+    function toggleChat() {
+        if (connection) {
+            connection.stop().then(() => {
+                console.log("Disconnected")
+            });
+            connection = null;
+        } else {
+            connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5085/chathub").build();
+            connection.on("ReceivePrivateMessage", (fromUserId, message) => {
+                addMessage(fromUserId, message)
+            });
+            connection.start().then(() => {
+                console.log("Connected");
+            });
+        }
+        const chatBox = document.getElementById('chatBox');
+        chatBox.classList.toggle('hidden');
+    }
+
+    function sendPrivateMessage() {
+        const input = document.getElementById('chatInput');
+        const messageText = input.value.trim();
+        if (!messageText || !connection) return;
+        
+        let request = {
+            Content: messageText
+        };
+
+        if (currentUser.isManager) {
+            const toUserId = "00000000-0000-0000-0000-000000000000";
+            request.RecipientId = toUserId;
+        }
+
+        connection.invoke("SendPrivateMessage", request).then(() => {
+            @* const chatMessages = document.getElementById('chatMessages');
+            const msgElement = document.createElement('div');
+            msgElement.className = 'mt-2 text-right';
+            msgElement.innerHTML = `<span class="inline-block bg-black text-white px-3 py-1 rounded-lg text-sm">${messageText}</span>`;
+            chatMessages.appendChild(msgElement);
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight; *@
+        }).catch(err => console.error("Send failed:", err.toString()));
+    }
+    
+    function addMessage(fromUserId, message){
+        const chatMessages = document.getElementById('chatMessages');
+        const msgElement = document.createElement('div');
+            msgElement.className = 'mt-2 text-left';
+        if(currentUser.userId == fromUserId){
+            msgElement.className = 'mt-2 text-right';                        
+        }
+        msgElement.innerHTML = `<span class="inline-block bg-gray-200 px-3 py-1 rounded-lg text-sm">${message}</span>`;
+        chatMessages.appendChild(msgElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        const chatInput = document.getElementById('chatInput');
+        chatInput.value = '';
+    }
+</script>

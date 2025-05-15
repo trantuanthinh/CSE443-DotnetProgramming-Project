@@ -1,122 +1,3 @@
-@* @model List<Project.Models.Item> *@
-
-@* @{ *@
-@*     ViewData["Title"] = "Home Page"; *@
-@* } *@
-
-@* <div class="flex flex-col justify-center items-center min-h-screen py-10"> *@
-
-@*     @if (Model != null) *@
-@*     { *@
-@*         <div class="mb-6 w-full max-w-md relative"> *@
-@*             <input type="text" id="searchInput" placeholder="Search items…" *@
-@*                 class="w-full pl-10 p-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 outline-none" /> *@
-@*         </div> *@
-
-@*         @if (Model.Any()) *@
-@*         { *@
-@*             <div id="itemList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 w-full"> *@
-@*                 @foreach (var item in Model) *@
-@*                 { *@
-@*                     <div class="searchable border rounded-lg shadow hover:shadow-lg transition p-4 flex flex-col items-center text-center" *@
-@*                         data-name="@item.Name.ToLower()"> *@
-@*                         <div class="w-32 h-32 mb-3 bg-gray-100"> *@
-@*                             <img src="data:image/jpeg;base64,@item.Image" alt="@item.Name" class="w-30 h-30 object-cover rounded" /> *@
-@*                         </div> *@
-
-@*                         <p class="text-sm font-semibold mb-1 truncate">@item.Name</p> *@
-@*                         <p class="text-xs text-gray-500 mb-2"> *@
-@*                             Available: <span class="font-medium">@item.Quantity</span> *@
-@*                         </p> *@
-
-@*                         <button type="button" *@
-@*                             class="bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600 disabled:opacity-50" *@
-@*                             onclick="openModal('@item.Id', '@item.Name', @item.Quantity)" @(item.Quantity == 0 ? "disabled" : "")> *@
-@*                             Borrow *@
-@*                         </button> *@
-@*                     </div> *@
-@*                 } *@
-@*             </div> *@
-@*         } *@
-@*         else *@
-@*         { *@
-@*             <p class="text-gray-500">No items found.</p> *@
-@*         } *@
-@*     } *@
-@* </div> *@
-
-@* <div id="borrowModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 px-4"> *@
-@*     <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md relative animate-fadeIn"> *@
-@*         <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Borrow Book</h2> *@
-
-@*         <form id="borrowForm" method="post" asp-controller="Home" asp-action="BorrowRequest" class="space-y-4"> *@
-@*             @Html.AntiForgeryToken() *@
-@*             <input type="hidden" name="itemId" id="modalItemId" /> *@
-@*             <p id="modalItemName" class="text-center text-lg font-medium text-gray-700"></p> *@
-
-@*             <div> *@
-@*                 <label for="quantityInput" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label> *@
-@*                 <input type="number" name="quantity" id="quantityInput" *@
-@*                     class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none" *@
-@*                     required min="1" /> *@
-@*             </div> *@
-
-@*             <div> *@
-@*                 <label for="requestDate" class="block text-sm font-medium text-gray-700 mb-1">Request Date</label> *@
-@*                 <input type="date" name="requestDate" id="requestDate" *@
-@*                     class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none" *@
-@*                     required /> *@
-@*             </div> *@
-
-@*             <div class="flex justify-end gap-3 pt-2"> *@
-@*                 <button type="button" onclick="closeModal()" *@
-@*                     class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"> *@
-@*                     Cancel *@
-@*                 </button> *@
-@*                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"> *@
-@*                     Confirm *@
-@*                 </button> *@
-@*             </div> *@
-@*         </form> *@
-@*     </div> *@
-@* </div> *@
-
-@* @section Scripts { *@
-@*     <script> *@
-@*         function openModal(itemId, itemName, maxQuantity) { *@
-@*             document.getElementById("modalItemId").value = itemId; *@
-@*             document.getElementById("modalItemName").innerText = `Item: ${ itemName }`; *@
-@*             const quantityInput = document.getElementById("quantityInput"); *@
-@*             quantityInput.value = 1; *@
-@*             quantityInput.max = maxQuantity; *@
-@*             document.getElementById("borrowModal").classList.remove("hidden"); *@
-@*         } *@
-
-@*         function closeModal() { *@
-@*             document.getElementById("borrowModal").classList.add("hidden"); *@
-@*         } *@
-
-@*         document.addEventListener("DOMContentLoaded", function () { *@
-@*             const today = new Date().toISOString().split("T")[0]; *@
-@*             document.getElementById("requestDate").setAttribute("min", today); *@
-@*         }); *@
-
-@*         document.getElementById("searchInput").addEventListener("input", function () { *@
-@*             const searchValue = this.value.toLowerCase(); *@
-@*             const items = document.querySelectorAll(".searchable"); *@
-
-@*             items.forEach(item => { *@
-@*                 const name = item.dataset.name; *@
-@*                 if (name.includes(searchValue)) { *@
-@*                     item.classList.remove("hidden"); *@
-@*                 } else { *@
-@*                     item.classList.add("hidden"); *@
-@*                 } *@
-@*             }); *@
-@*         }); *@
-@*     </script> *@
-@* } *@
-
 @model List<Project.Models.Item>
 @using Project.Utils;
 
@@ -131,11 +12,13 @@
 
         <div class="mb-6 w-full max-w-md mx-auto">
             <div class="relative">
-                <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 <input type="text" id="searchInput" placeholder="Search items…"
-                       class="w-full pl-10 p-3 border rounded-md shadow-sm focus:ring-blue-500 focus:border-black outline-none" />
+                    class="w-full pl-10 p-3 border rounded-md shadow-sm focus:ring-blue-500 focus:border-black outline-none" />
             </div>
         </div>
 
@@ -146,12 +29,11 @@
     else
     {
         <p class="text-gray-600 text-center">Loading items...</p>
-
     }
 
 </div>
 
-<div id="borrowModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div id="borrowModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
     <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-8">
         <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">Borrow Item</h2>
 
@@ -164,28 +46,26 @@
                 <label for="quantityInput" class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
                 <div class="relative rounded-md shadow-sm">
                     <input type="number" name="quantity" id="quantityInput"
-                           class="block w-full border-gray-300 rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                           placeholder="Enter quantity"
-                           required min="1" />
+                        class="block w-full border-gray-300 rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Enter quantity" required min="1" />
                 </div>
             </div>
 
             <div>
                 <label for="requestDate" class="block text-sm font-medium text-gray-700 mb-2">Request Date</label>
                 <div class="relative rounded-md shadow-sm">
-                    <input type="date" name="requestDate" id="requestDate"
-                           class="block w-full border-gray-300 rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                           required />
+                    <input type="date" name="requestDate" id="requestDate" required
+                        class="block w-full border-gray-300 rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
                 </div>
             </div>
 
             <div class="mt-6 flex justify-end gap-4">
                 <button type="button" onclick="closeModal()"
-                        class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     Cancel
                 </button>
                 <button type="submit"
-                        class="inline-flex items-center justify-center rounded-md border border-transparent bg-black hover:bg-gray-800 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     Confirm Borrow
                 </button>
             </div>
@@ -194,7 +74,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());
 
@@ -204,7 +83,7 @@
                 return;
             }
             document.getElementById("modalItemId").value = itemId;
-            document.getElementById("modalItemName").innerText = `Item: ${itemName}`;
+            document.getElementById("modalItemName").innerText = `Item: ${ itemName }`;
             const quantityInput = document.getElementById("quantityInput");
             quantityInput.value = 1;
             quantityInput.max = maxQuantity;
