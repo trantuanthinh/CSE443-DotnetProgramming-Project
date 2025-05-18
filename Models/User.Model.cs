@@ -15,6 +15,6 @@ namespace Project.Models
 
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public UserType Role { get; set; }
+        public UserType Role { get; set; } = UserType.Lecturer;
     }
 }
