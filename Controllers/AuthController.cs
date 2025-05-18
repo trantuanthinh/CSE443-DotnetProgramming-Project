@@ -25,11 +25,19 @@ public class AuthController(
 
     public ActionResult SignIn()
     {
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index", "Home");
+        }
         return View();
     }
 
     public ActionResult SignUp()
     {
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index", "Home");
+        }
         return View();
     }
 
@@ -216,14 +224,33 @@ public class AuthController(
                 if (!isCreated)
                 {
                     _logger.LogInformation("Failed to create Google User");
-                    return RedirectToAction(nameof(SignIn));
+                    return RedirectToAction("Index", "SignIn");
                 }
             }
+
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, _item.Name),
+                new(ClaimTypes.NameIdentifier, _item.Id.ToString()),
+                new(ClaimTypes.Role, _item.Role.ToString()),
+            };
+
+            var identity = new ClaimsIdentity(
+                claims,
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal
+            );
 
             string script =
                 $@"<script>
                     if (window.opener)
                         {{
+                            window.opener.location.reload();
                             window.close();
                         }}
                     </script>";
