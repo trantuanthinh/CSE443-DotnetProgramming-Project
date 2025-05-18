@@ -24,12 +24,6 @@ namespace Project.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["UserConversations"] = await _userService.GetManagers();
-            if (User.HasClaim(ClaimTypes.Role, UserType.Manager.ToString()))
-            {
-                ViewData["UserConversations"] = await _userService.GetLecturers();
-            }
-
             var items = await _itemService.GetItems();
             return View(items);
         }

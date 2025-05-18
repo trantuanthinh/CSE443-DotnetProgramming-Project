@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Project.AppContext;
+using Project.Interfaces;
 
 namespace Project.Core
 {
@@ -10,6 +11,7 @@ namespace Project.Core
         protected readonly IMapper? _mapper;
         protected readonly DataContext? _dataContext;
         protected readonly ILogger? _logger;
+        protected readonly IUserService userService;
 
         public BaseController() { }
 

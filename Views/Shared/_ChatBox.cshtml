@@ -2,7 +2,7 @@
 @using Project.Utils;
 
 @{
-    var userConverations = ViewData["UserConversations"];
+    var userConversations = ViewData["UserConversations"] as IEnumerable<User>;
     var isAuthenticated = User.Identity.IsAuthenticated;
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var userRole = User.FindFirstValue(ClaimTypes.Role);
@@ -34,7 +34,7 @@
                             <span class="font-semibold">Chat To All</span>
                         </li>
                     }
-                    @foreach (var user in userConverations as IEnumerable<User>)
+                    @foreach (var user in userConversations as IEnumerable<User>)
                     {
                         <li class="flex items-center space-x-2 py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer"
                             data-user-id="@user.Id" data-user-name="@user.Name">

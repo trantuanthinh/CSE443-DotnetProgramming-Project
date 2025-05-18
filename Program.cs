@@ -6,6 +6,7 @@ using Project.AppContext;
 using Project.AutoJobs;
 using Project.AutoMapperHelper;
 using Project.Core;
+using Project.Core.Filters;
 using Project.Hubs;
 using Project.Interfaces;
 using Project.MailServices;
@@ -16,8 +17,6 @@ using Project.Utils;
 using Quartz;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllersWithViews();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<DataContext>(options =>
@@ -32,7 +31,10 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddSession();
 builder.Services.AddSignalR();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.AddService<LayoutDataFilter>();
+});
 builder.Services.AddQuartz(store =>
 {
     store.UsePersistentStore(option =>
@@ -62,6 +64,7 @@ builder.Services.AddSingleton<MailService>();
 builder.Services.AddSingleton<SharedService>();
 builder.Services.AddSingleton<OtpService>();
 builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+builder.Services.AddScoped<LayoutDataFilter>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -77,6 +80,7 @@ builder.Services.AddScoped<ItemRepository>();
 builder.Services.AddScoped<BorrowTransactionRepository>();
 builder.Services.AddScoped<ConversationRepository>();
 builder.Services.AddScoped<MessageRepository>();
+
 builder
     .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
