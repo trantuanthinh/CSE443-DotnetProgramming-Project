@@ -33,21 +33,21 @@ namespace Project.Services
 
         public async Task<bool> EditUser(User item)
         {
-            var existingItem = await GetUser(item.Id);
-            if (existingItem == null)
-            {
-                return false;
-            }
+            // var existingItem = await GetUser(item.Id);
+            // if (existingItem == null)
+            // {
+            //     return false;
+            // }
 
-            existingItem.Name = item.Name;
-            existingItem.Username = item.Username;
-            if (!string.IsNullOrWhiteSpace(item.Password))
-            {
-                existingItem.Password = BCrypt.Net.BCrypt.HashPassword(item.Password);
-            }
-            existingItem.PhoneNumber = item.PhoneNumber;
+            // existingItem.Name = item.Name;
+            // existingItem.Username = item.Username;
+            // if (!string.IsNullOrWhiteSpace(item.Password))
+            // {
+            //     existingItem.Password = BCrypt.Net.BCrypt.HashPassword(item.Password);
+            // }
+            // existingItem.PhoneNumber = item.PhoneNumber;
 
-            _repository.Update(existingItem);
+            _repository.Update(item);
             return await _repository.SaveAsync();
         }
     }

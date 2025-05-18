@@ -40,6 +40,57 @@ namespace Project.Controllers
             return View();
         }
 
+        #region Profile
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile(IFormCollection form)
+        {
+            try
+            {
+                var idValue = form["id"];
+                if (string.IsNullOrWhiteSpace(idValue))
+                {
+                    _logger.LogWarning("User ID is missing.");
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var id = Guid.Parse(idValue);
+
+                var name = form["name"];
+                var username = form["username"];
+                var email = form["email"];
+                var password = form["password"];
+                var phoneNumber = form["phoneNumber"];
+
+                var user = await _userService.GetUser(id);
+                if (user == null)
+                {
+                    _logger.LogWarning("User not found.");
+                    return RedirectToAction(nameof(Index));
+                }
+
+                user.Name = name;
+                user.Username = username;
+                user.Email = email;
+                user.PhoneNumber = phoneNumber;
+
+                bool isUpdated = await _userService.EditUser(user);
+                if (!isUpdated)
+                {
+                    _logger.LogWarning("Update failed.");
+                }
+
+                _logger.LogInformation("Profile updated successfully.");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in UpdateProfile");
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
+        }
+        #endregion
+
         #region Item
         [HttpPost]
         [Authorize(Roles = nameof(UserType.Manager))]
