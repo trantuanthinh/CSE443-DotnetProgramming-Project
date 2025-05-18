@@ -52,26 +52,28 @@
                 onclick="toggleItemModal(false)">
                 &times;
             </button>
-            <h1 class="text-3xl font-bold mb-4">Add Item</h1>
-            <form id="itemForm" asp-controller="Profile" asp-action="HandleItemForm" method="post" enctype="multipart/form-data"
-                onsubmit="submitItemForm(event)">
-                <input type="hidden" id="id" name="id" />
+            <h1 id="modalTitle" class="text-3xl font-bold mb-4">Add Item</h1>
+            <form id="itemForm" asp-controller="Profile" asp-action="HandleItemForm" data-ajax="true"
+                data-ajax-method="POST" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="itemId" name="id" />
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1" for="name">Name</label>
-                    <input class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
-                        id="name" name="name" type="text" required />
+                    <input
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                        id="itemName" name="name" type="text" required />
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1" for="quantity">Quantity</label>
-                    <input class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
-                        id="quantity" name="quantity" type="number" required />
+                    <input
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                        id="itemQuantity" name="quantity" type="number" required />
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1" for="categoryId">Category</label>
-                    <select id="categoryId" name="categoryId"
+                    <select id="itemCategoryId" name="categoryId"
                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                         required>
                         <option value="" disabled>-- Select Category --</option>
@@ -84,8 +86,9 @@
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1" for="image">Image</label>
-                    <input class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
-                        id="image" name="image" type="file" />
+                    <input
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                        id="itemImage" name="image" type="file" />
                 </div>
 
                 <div class="flex justify-end gap-3 pt-2">
@@ -108,11 +111,12 @@
         modal.classList.toggle('hidden', !show);
 
         if (show) {
-            document.getElementById('id').value = item.id || '';
-            document.getElementById('name').value = item.name || '';
-            document.getElementById('quantity').value = item.quantity || '';
-            document.getElementById('categoryId').value = item.categoryId || '';
-            document.getElementById('image').value = '';
+            document.getElementById('modalTitle').textContent = item.id ? 'Edit Item' : 'Add Item';
+            document.getElementById('itemId').value = item.id || "";
+            document.getElementById('itemName').value = item.name || "";
+            document.getElementById('itemQuantity').value = item.quantity || "";
+            document.getElementById('itemCategoryId').value = item.categoryId || "";
+            document.getElementById('itemImage').value = "";
         }
     }
 
