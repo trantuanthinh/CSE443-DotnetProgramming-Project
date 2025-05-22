@@ -16,6 +16,7 @@
             <thead class="bg-gray-100 text-md uppercase font-semibold">
                 <tr>
                     <th class="px-6 py-3">Name</th>
+                    <th class="px-6 py-3">Image</th>
                     <th class="px-6 py-3">Quantity</th>
                     <th class="px-6 py-3">Actions</th>
                 </tr>
@@ -25,6 +26,10 @@
                 {
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 whitespace-nowrap text-left">@item.Name</td>
+
+                        <td class="px-6 py-4 whitespace-nowrap justify-center">
+                            <img src="data:image/jpeg;base64,@item.Image" alt="Image" class="h-4 w-4 object-cover rounded" />
+                        </td>
                         <td class="px-6 py-4 text-center">@item.Quantity</td>
                         <td class="flex px-6 py-4 justify-center space-x-4">
                             <button type="button" class="text-blue-600 hover:text-blue-800"

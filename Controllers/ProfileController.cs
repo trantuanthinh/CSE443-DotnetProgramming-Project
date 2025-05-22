@@ -50,12 +50,11 @@ namespace Project.Controllers
                 var idValue = form["id"];
                 if (string.IsNullOrWhiteSpace(idValue))
                 {
-                    _logger.LogWarning("User ID is missing.");
+                    TempData["ErrorMessage"] = "User ID is missing.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 var id = Guid.Parse(idValue);
-
                 var name = form["name"];
                 var username = form["username"];
                 var email = form["email"];
@@ -65,7 +64,7 @@ namespace Project.Controllers
                 var user = await _userService.GetUser(id);
                 if (user == null)
                 {
-                    _logger.LogWarning("User not found.");
+                    TempData["ErrorMessage"] = "User not found.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -74,21 +73,30 @@ namespace Project.Controllers
                 user.Email = email;
                 user.PhoneNumber = phoneNumber;
 
+                // Optional: Cập nhật password nếu có
+                if (!string.IsNullOrWhiteSpace(password))
+                {
+                    user.Password = password;
+                }
+
                 bool isUpdated = await _userService.EditUser(user);
                 if (!isUpdated)
                 {
-                    _logger.LogWarning("Update failed.");
+                    TempData["ErrorMessage"] = "Update failed.";
+                    return RedirectToAction(nameof(Index));
                 }
 
-                _logger.LogInformation("Profile updated successfully.");
+                TempData["SuccessMessage"] = "Profile updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in UpdateProfile");
-                return Json(new { success = false, message = "An unexpected error occurred." });
+                TempData["ErrorMessage"] = "An unexpected error occurred.";
+                return RedirectToAction(nameof(Index));
             }
         }
+
         #endregion
 
         #region Item

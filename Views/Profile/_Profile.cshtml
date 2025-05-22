@@ -16,6 +16,20 @@
     </div>
 </div>
 
+<!-- Success / Error Notifications -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="successAlert" class="mt-6 p-2 bg-green-500 text-white font-semibold rounded-full shadow">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div id="errorAlert" class="mt-6 p-2 bg-red-500 text-white font-semibold rounded-full shadow">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <!-- Modal -->
 <div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50 items-center justify-center">
     <div class="flex items-center justify-center min-h-screen px-4">
@@ -72,9 +86,18 @@
     </div>
 </div>
 
+<!-- Scripts -->
 <script>
     function toggleModal(show) {
         const modal = document.getElementById('editModal');
         modal.classList.toggle('hidden', !show);
     }
+
+    // Auto-hide alert messages after 3 seconds
+    setTimeout(() => {
+        const success = document.getElementById('successAlert');
+        const error = document.getElementById('errorAlert');
+        if (success) success.style.display = 'none';
+        if (error) error.style.display = 'none';
+    }, 3000);
 </script>
