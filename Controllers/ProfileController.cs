@@ -97,6 +97,26 @@ namespace Project.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize(Roles = nameof(UserType.Manager))]
+        public async Task<IActionResult> DeleteUser([FromBody] string id)
+        {
+            try
+            {
+                var _id = Guid.Parse(id);
+                bool isDeleted = await _userService.DeleteUser(_id);
+                if (!isDeleted)
+                {
+                    return Json(new { success = false, message = "Delete failed." });
+                }
+                return Json(new { success = true, message = "User deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting item");
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
+        }
         #endregion
 
         #region Item
@@ -167,7 +187,6 @@ namespace Project.Controllers
         {
             try
             {
-                Console.WriteLine(id);
                 var _id = Guid.Parse(id);
                 bool isDeleted = await _itemService.DeleteItem(_id);
                 if (!isDeleted)

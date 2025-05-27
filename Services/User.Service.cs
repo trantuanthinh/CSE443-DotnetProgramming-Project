@@ -50,5 +50,11 @@ namespace Project.Services
             _repository.Update(item);
             return await _repository.SaveAsync();
         }
+
+        public async Task<bool> DeleteUser(Guid id)
+        {
+            _repository.Delete(id);
+            return await _repository.SaveAsync();
+        }
     }
 }

@@ -8,5 +8,6 @@ namespace Project.Interfaces
         Task<ICollection<User>> GetManagers();
         Task<User> GetUser(Guid id);
         Task<bool> EditUser(User item);
+        Task<bool> DeleteUser(Guid id);
     }
 }
