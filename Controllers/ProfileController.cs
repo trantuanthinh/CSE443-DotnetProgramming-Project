@@ -163,11 +163,13 @@ namespace Project.Controllers
 
         [HttpPost]
         [Authorize(Roles = nameof(UserType.Manager))]
-        public async Task<IActionResult> DeleteItem([FromBody] Guid id)
+        public async Task<IActionResult> DeleteItem([FromBody] string id)
         {
             try
             {
-                bool isDeleted = await _itemService.DeleteItem(id);
+                Console.WriteLine(id);
+                var _id = Guid.Parse(id);
+                bool isDeleted = await _itemService.DeleteItem(_id);
                 if (!isDeleted)
                 {
                     return Json(new { success = false, message = "Delete failed." });
