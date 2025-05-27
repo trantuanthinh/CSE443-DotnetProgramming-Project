@@ -52,6 +52,17 @@ namespace Project.AppContext
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Status).HasConversion(ItemStatusConverter);
+
+                entity
+                    .HasOne(o => o.Borrower)
+                    .WithMany()
+                    .HasForeignKey(o => o.BorrowerId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity
+                    .HasOne(o => o.Manager)
+                    .WithMany()
+                    .HasForeignKey(o => o.ManagerId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Conversation>(entity =>

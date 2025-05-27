@@ -40,7 +40,7 @@ namespace Project.MailServices
                 MailAddress to = new MailAddress(email);
                 using MailMessage message = new MailMessage(from, to)
                 {
-                    Subject = subject,
+                    Subject = "Demo Only: " + subject,
                     Body = body,
                     IsBodyHtml = true,
                 };

@@ -13,11 +13,13 @@ namespace Project.Controllers
         ILogger<ManagerController> logger,
         MailService mailService,
         IItemService itemService,
+        IUserService userService,
         IBorrowTransactionService borrowTransactionService
     ) : BaseController(logger: logger)
     {
         private readonly MailService _mailService = mailService;
         private readonly IItemService _itemService = itemService;
+        private readonly IUserService _userService = userService;
         private readonly IBorrowTransactionService _borrowTransactionService =
             borrowTransactionService;
 
@@ -55,6 +57,7 @@ namespace Project.Controllers
             try
             {
                 var borrowTransaction = await _borrowTransactionService.GetItem(itemId);
+                var _userId = borrowTransaction.BorrowerId;
                 if (borrowTransaction == null)
                 {
                     _logger.LogInformation("Borrow Transaction not found");
@@ -74,30 +77,35 @@ namespace Project.Controllers
                 var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 var id = Guid.Parse(idClaim.Value);
                 borrowTransaction.ManagerId = id;
-                borrowTransaction.DueDate = borrowTransaction.RequestDate.AddDays(7);
                 borrowTransaction.Status = status;
+
+                if (status == ItemStatus.Approved)
+                {
+                    borrowTransaction.DueDate = borrowTransaction.RequestDate.AddDays(7);
+                    item.Quantity -= borrowTransaction.Quantity;
+                    if (!await _itemService.EditItem(item))
+                    {
+                        throw new Exception("Failed to update Item");
+                    }
+                }
+
                 if (!await _borrowTransactionService.EditItem(borrowTransaction))
                 {
                     throw new Exception("Failed to update Borrow Transaction");
                 }
 
-                item.Quantity -= borrowTransaction.Quantity;
-                if (!await _itemService.EditItem(item))
-                {
-                    throw new Exception("Failed to update Item");
-                }
-
                 // Open For Testing Email/ Demo
-                // var body = _borrowTransactionService.GenerateBorrowResponseBody(
-                //     CurrentUser.Name,
-                //     borrowTransaction.Quantity,
-                //     borrowTransaction.Status.ToString(),
-                //     borrowTransaction.RequestDate
-                // );
-                // if (!await _mailService.SendMail(CurrentUser.Email, "Borrow Response Status", body))
-                // {
-                //     throw new Exception("Failed to send email");
-                // }
+                var _user = await _userService.GetUser(_userId);
+                var body = _borrowTransactionService.GenerateBorrowResponseBody(
+                    _user.Email,
+                    borrowTransaction.Quantity,
+                    borrowTransaction.Status.ToString(),
+                    borrowTransaction.RequestDate
+                );
+                if (!await _mailService.SendMail(_user.Email, "Borrow Response Status", body))
+                {
+                    throw new Exception("Failed to send email");
+                }
 
                 await transaction.CommitAsync();
                 _logger.LogInformation("Transaction Success");
