@@ -3,10 +3,27 @@
 
 @{
     ViewData["Title"] = "Borrowing Item List Page";
+    var selectedStatus = ViewBag.SelectedStatus as string ?? "";
+    var statuses = Enum.GetValues(typeof(ItemStatus)).Cast<ItemStatus>();
 }
 
 <div class="w-full px-6 py-10">
     <h2 class="text-2xl font-bold mb-6 text-gray-800">Borrowing Item List</h2>
+    <form asp-controller="Manager" asp-action="BorrowingItemList" method="get" class="flex items-center gap-2">
+        <select name="status" class="border-gray-300 rounded px-2 py-1 text-sm status-select">
+            <option value="all" selected="All">All</option>
+            @foreach (var status in statuses)
+            {
+                <option value="@status" selected="@(selectedStatus == status.ToString())">@status</option>
+            }
+        </select>
+
+        <button type="submit"
+            class="px-2 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700 update-btn disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled>
+            Filter
+        </button>
+    </form>
 
     @if (Model != null && Model.Any())
     {
@@ -20,6 +37,7 @@
                         <th class="px-4 py-3 border-b">Borrow Date</th>
                         <th class="px-4 py-3 border-b">Due Date</th>
                         <th class="px-4 py-3 border-b">Return Date</th>
+                        <th class="px-4 py-3 border-b">Status</th>
                         <th class="px-4 py-3 border-b">Action</th>
                     </tr>
                 </thead>
@@ -28,31 +46,41 @@
                     {
                         <tr class="hover:bg-gray-50 border-t">
                             <td class="flex px-4 py-3 justify-center">
-                                <img src="data:image/jpeg;base64,@item.Item.Image" alt="@item.Item.Name" class="h-4 w-4 object-cover rounded" />
+                                <img src="data:image/jpeg;base64,@item.Item.Image" alt="@item.Item.Name"
+                                    class="h-4 w-4 object-cover rounded" />
                             </td>
                             <td class="px-4 py-3">@item.Item.Name</td>
                             <td class="px-4 py-3">@item.Quantity</td>
                             <td class="px-4 py-3">@item.RequestDate.ToString("yyyy-MM-dd")</td>
                             <td class="px-4 py-3">@item.DueDate?.ToString("yyyy-MM-dd")</td>
                             <td class="px-4 py-3">@item.ReturnDate?.ToString("yyyy-MM-dd")</td>
+                            <td class="px-4 py-3">@item.Status</td>
                             <td class="px-4 py-3">
-                                <form asp-controller="Manager" asp-action="ManageBorrowItem" method="post" class="inline-block">
+                                <form asp-controller="Manager" asp-action="UpdateStatus" method="post"
+                                    class="flex items-center gap-2">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="itemId" value="@item.Id" />
-                                    @if (item.Status == ItemStatus.Borrowing)
-                                    {
-                                        <button type="submit" name="status" value="@ItemStatus.Returned.ToString()"
-                                                class="px-3 py-1 text-sm text-green-600 border border-green-600 rounded hover:bg-green-100">
-                                            Return
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="submit" name="status" value="@ItemStatus.Borrowing.ToString()"
-                                                class="px-3 py-1 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-100">
-                                            Borrowing
-                                        </button>
-                                    }
+
+                                    <select name="status" class="border-gray-300 rounded px-2 py-1 text-sm status-select">
+                                        <option value="" disabled selected>Update Status</option>
+
+                                        @if (item.Status == ItemStatus.Approved)
+                                        {
+                                            <option value="@ItemStatus.Borrowing">@ItemStatus.Borrowing</option>
+                                            <option value="@ItemStatus.Cancelled">@ItemStatus.Cancelled</option>
+                                        }
+
+                                        @if (item.Status == ItemStatus.Borrowing || item.Status == ItemStatus.Overdue)
+                                        {
+                                            <option value="@ItemStatus.Returned">@ItemStatus.Returned</option>
+                                        }
+                                    </select>
+
+                                    <button type="submit"
+                                        class="px-2 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700 update-btn disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                        disabled>
+                                        Update
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -66,3 +94,20 @@
         <p class="text-gray-600 mt-6">No borrowing items available.</p>
     }
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.status-select').forEach(selectEl => {
+            const form = selectEl.closest('form');
+            const submitBtn = form.querySelector('.update-btn');
+
+            const checkEnable = () => {
+                submitBtn.disabled = !selectEl.value || selectEl.value === "";
+            };
+
+            checkEnable();
+
+            selectEl.addEventListener('change', checkEnable);
+        });
+    });
+</script>

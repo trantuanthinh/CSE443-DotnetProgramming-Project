@@ -27,5 +27,6 @@
         Borrowing,
         Returned,
         Overdue,
+        Cancelled,
     }
 }

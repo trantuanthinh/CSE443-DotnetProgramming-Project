@@ -32,15 +32,18 @@ namespace Project.Controllers
         }
 
         [Authorize(Roles = nameof(UserType.Manager))]
-        public async Task<IActionResult> BorrowingItemList()
+        public async Task<IActionResult> BorrowingItemList(string? status)
         {
             var items = await _borrowTransactionService.GetItems();
-            var filterList = items
-                .Where(item =>
-                    item.Status == ItemStatus.Approved || item.Status == ItemStatus.Borrowing
-                )
-                .ToList();
-            return View(filterList);
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (Enum.TryParse<ItemStatus>(status, out var parsedStatus))
+                {
+                    items = items.Where(i => i.Status == parsedStatus).ToList();
+                }
+            }
+            ViewBag.SelectedStatus = status ?? "All";
+            return View(items);
         }
 
         [HttpPost]
@@ -120,23 +123,52 @@ namespace Project.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManageBorrowItem(Guid itemId, ItemStatus status)
+        public async Task<IActionResult> UpdateStatus(Guid itemId, ItemStatus status)
         {
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
-            // Open For Testing Email/ Demo
-            // var body = _borrowTransactionService.GenerateBorrowResponseBody(
-            //     CurrentUser.Name,
-            //     borrowTransaction.Quantity,
-            //     borrowTransaction.Status.ToString(),
-            //     borrowTransaction.RequestDate
-            // );
-            // if (!await _mailService.SendMail(CurrentUser.Email, "Borrow Response Status", body))
-            // {
-            //     throw new Exception("Failed to send email");
-            // }
+
+            await using var transaction = await _borrowTransactionService.BeginTransactionAsync();
+            try
+            {
+                var borrowTransaction = await _borrowTransactionService.GetItem(itemId);
+                var _userId = borrowTransaction.BorrowerId;
+                if (borrowTransaction == null)
+                {
+                    _logger.LogInformation("Borrow Transaction not found");
+                    return RedirectToAction("Index", "Manager");
+                }
+
+                var item = await _itemService.GetItem(borrowTransaction.Item.Id);
+                if (status == ItemStatus.Returned || status == ItemStatus.Cancelled)
+                {
+                    item.Quantity += borrowTransaction.Quantity;
+                    if (!await _itemService.EditItem(item))
+                    {
+                        throw new Exception("Failed to update Item");
+                    }
+                }
+
+                var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var id = Guid.Parse(idClaim.Value);
+                borrowTransaction.ManagerId = id;
+                borrowTransaction.Status = status;
+
+                if (!await _borrowTransactionService.EditItem(borrowTransaction))
+                {
+                    throw new Exception("Failed to update Borrow Transaction");
+                }
+
+                await transaction.CommitAsync();
+                _logger.LogInformation("Transaction Success");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError("Transaction Failed: {0}", ex.Message);
+            }
             return RedirectToAction("BorrowRequest", "Manager");
         }
 
