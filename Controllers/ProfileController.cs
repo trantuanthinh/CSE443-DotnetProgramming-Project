@@ -140,14 +140,12 @@ namespace Project.Controllers
 
                 if (id.HasValue)
                 {
-                    var item = new Item
-                    {
-                        Id = id.Value,
-                        Name = name,
-                        Quantity = quantity,
-                        CategoryId = categoryId,
-                        Image = imageBase64,
-                    };
+                    var item = await _itemService.GetItem(id.Value);
+                    item.Name = name;
+                    item.Quantity = quantity;
+                    item.CategoryId = categoryId;
+                    item.Image = string.IsNullOrWhiteSpace(imageBase64) ? item.Image : imageBase64;
+
                     bool isUpdated = await _itemService.EditItem(item);
                     if (!isUpdated)
                     {
