@@ -59,8 +59,7 @@
                 &times;
             </button>
             <h1 id="modalTitle" class="text-3xl font-bold mb-4">Add Item</h1>
-            <form id="itemForm" asp-controller="Profile" asp-action="HandleItemForm" data-ajax="true"
-                data-ajax-method="POST" method="post" enctype="multipart/form-data">
+            <form id="itemForm" method="post" enctype="multipart/form-data">
                 <input type="hidden" id="itemId" name="id" />
 
                 <div class="mb-4">
@@ -192,37 +191,34 @@
             deleteItemId = null;
             deleteTargetButton = null;
         });
-    });
 
-    // Add/Edit submit handler
-    async function submitItemForm(e) {
-        e.preventDefault();
         const form = document.getElementById("itemForm");
-        const formData = new FormData(form);
-
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-            showItemMessage(result.message, result.success);
-
-            if (result.success) {
-                toggleItemModal(false);
-                setTimeout(() => location.reload(), 1500);
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            console.log("submit caught by event listener");
+            const formData = new FormData(form);
+            try {
+                const response = await fetch('/Profile/HandleItemForm', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                showItemMessage(result.message, result.success);
+                if (result.success) {
+                    toggleItemModal(false)
+                    setTimeout(() => location.reload(), 1500);
+                };
+            } catch {
+                showItemMessage("Something went wrong.", false);
             }
-        } catch (err) {
-            showItemMessage("Something went wrong.", false);
-        }
-    }
+        });
+    });
 
     // Show notification
     function showItemMessage(message, success) {
         const msgItemBox = document.getElementById("itemMessage");
         msgItemBox.textContent = message;
-        msgItemBox.className = "text-sm mt-4 p-2 rounded text-white " + 
+        msgItemBox.className = "text-sm mt-4 p-2 rounded text-white " +
             (success ? "bg-green-500" : "bg-red-500");
         msgItemBox.classList.remove("hidden");
 
